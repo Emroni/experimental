@@ -1,4 +1,52 @@
 body {
+    background-color: #111;
     margin: 0;
-    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    position: absolute;
+    left: 50vw;
+    top: 50vh;
+    transform: translate(-50%, -50%);
+}
+
+.actions {
+    position: fixed;
+    padding: 10px;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+}
+
+button {
+    border: none;
+    background-color: #666;
+    outline: none;
+}
+
+#progress-time {
+    font-family: Helvetica, Arial, sans-serif;
+    color: #666;
+    position: absolute;
+    padding: 10px;
+    right: 0;
+    bottom: 0;
+}
+#progress-bar {
+    background-color: #666;
+    position: absolute;
+    height: 1px;
+    width: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.output {
+    border: 1px solid #666;
+    position: fixed;
+    max-width: 25vw;
+    top: 0;
+    left: 0;
+    z-index: 1;
 }
