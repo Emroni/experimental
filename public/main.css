@@ -25,15 +25,7 @@ button {
     outline: none;
 }
 
-#progress-time {
-    font-family: Helvetica, Arial, sans-serif;
-    color: #666;
-    position: absolute;
-    padding: 10px;
-    right: 0;
-    bottom: 0;
-}
-#progress-bar {
+#progress {
     background-color: #666;
     position: absolute;
     height: 1px;

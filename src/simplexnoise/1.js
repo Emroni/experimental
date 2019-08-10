@@ -20,12 +20,12 @@ const container = new PIXI.ParticleContainer();
 app.stage.addChild(container);
 
 const particleShape = new PIXI.Graphics();
-particleShape.beginFill(0xFFFFFF, 0.2);
+particleShape.beginFill(0xFFFFFF, 0.1);
 particleShape.drawCircle(0, 0, 1);
 particleShape.endFill();
 const particleTexture = app.renderer.generateTexture(particleShape);
 
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 2000; i++) {
     const particle = new PIXI.Sprite.from(particleTexture);
     container.addChild(particle);
 }

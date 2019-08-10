@@ -1,6 +1,7 @@
+const fs = require('fs-extra');
 const LiveReloadPlugin = require('webpack-livereload-plugin');
 const Path = require('path');
-const fs = require('fs-extra');
+const Webpack = require('webpack');
 
 module.exports = () => {
 
@@ -18,8 +19,10 @@ module.exports = () => {
                     const stats = fs.statSync(path);
 
                     if (latest.time < stats.mtimeMs) {
+                        iteration = iteration.replace('.js', '');
                         latest = {
-                            iteration: iteration.replace('.js', ''),
+                            iteration,
+                            name: `${project}-${iteration}`,
                             path,
                             project,
                             time: stats.mtimeMs,
@@ -27,18 +30,21 @@ module.exports = () => {
                     }
                 });
         });
-    
+
     return {
         mode: 'development',
         name: latest.project,
         entry: {
-            [`${latest.project}-${latest.iteration}`]: latest.path,
+            [latest.name]: latest.path,
         },
         output: {
             filename: '[name].js',
             path: Path.resolve(__dirname, 'public/build') + '/',
         },
         plugins: [
+            new Webpack.DefinePlugin({
+                PROJECT: `'${latest.name}'`,
+            }),
             new LiveReloadPlugin(),
         ],
     }

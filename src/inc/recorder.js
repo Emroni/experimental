@@ -1,4 +1,9 @@
-import GIF from './gif';
+import axios from 'axios';
+
+const SERVER = 'http://localhost:3000';
+const SERVER_CLEAN = `${SERVER}/clean`;
+const SERVER_GIF_ADD = `${SERVER}/gif/add`;
+const SERVER_GIF_RENDER = `${SERVER}/gif/render`;
 
 export default class Recorder {
 
@@ -9,93 +14,63 @@ export default class Recorder {
         this.time = options.time || 0;
 
         this.increment = 1 / 60;
-        this.frames = [];
-        this.framesTarget = this.duration * 60 - 1;
+        this.framesIndex = 0;
+        this.framesTarget = this.duration * 60;
 
-        this.progressTime = document.getElementById('progress-time');
-        this.progressBar = document.getElementById('progress-bar');
+        this.progressBar = document.getElementById('progress');
 
         this.gifButton = document.getElementById('gif');
-        this.gifButton.onclick = this.gifStart.bind(this);
+        this.gifButton.onclick = this.record.bind(this);
 
+        this.snap = this.snap.bind(this);
         this.tick = this.tick.bind(this);
         this.tick();
     }
 
     tick() {
+        this.frameRequest = requestAnimationFrame(this.tick);
+        this.renderTick();
+    }
+
+    renderTick() {
         this.render(this.time / this.duration);
-
-        if (this.recording && this.time >= 1) {
-            if (this.frames.length < this.framesTarget) {
-                this.frames.push(this.target.toDataURL('image/png'));
-                this.progress((this.frames.length / this.framesTarget) * 0.2, 0);
-            } else {
-                this.recording = false;
-                this.parse();
-                return;
-            }
-        }
-
-        requestAnimationFrame(this.tick);
         this.time += this.increment;
     }
 
-    gifStart() {
+    record() {
         this.gifButton.disabled = true;
+        cancelAnimationFrame(this.frameRequest);
 
-        this.gif = new GIF({
-            workers: 2,
-            quality: 1,
-            workerScript: '/js/gif.worker.js',
-            height: this.target.height,
-            width: this.target.width,
-        });
-
-        this.gif.on('progress', this.progress.bind(this));
-        this.gif.on('finished', this.finished.bind(this));
-
-        this.start = performance.now();
-        this.recording = true;
+        axios.get(SERVER_CLEAN)
+            .then(this.snap);
     }
 
-    parse() {
-        if (this.frames.length) {
-            if (this.gif) {
-                const img = new Image();
-                img.onload = () => {
-                    this.gif.addFrame(img, {
-                        delay: 1000 / 60,
-                    });
-                    this.parse();
-                };
-                img.src = this.frames.shift();
-            }
+    async snap() {
+        if (this.framesIndex) {
+            await axios.post(SERVER_GIF_ADD, {
+                index: this.framesIndex,
+                data: this.target.toDataURL('image/png'),
+            });
+        }
 
-        } else if (this.gif) {
-            this.gif.render();
+        this.framesIndex++;
+        this.progressBar.style.width = `${100 * (this.framesIndex - 1) / this.framesTarget}vw`;
+
+        if (this.framesIndex <= this.framesTarget) {
+            this.renderTick();
+            requestAnimationFrame(this.snap);
+
+        } else {
+            await axios.post(SERVER_GIF_RENDER, {
+                name: PROJECT,
+                delay: 1000 / 60,
+                width: this.target.width,
+                height: this.target.height,
+            });
+
+            this.progressBar.style.width = 0;
+            this.gifButton.disabled = false;
+            this.tick();
         }
     }
-
-    progress(progress, offset = 0.2) {
-        progress = (1 - offset) * progress + offset;
-        this.progressBar.style.width = `${100 * progress}vw`;
-
-        const time = Math.floor((performance.now() - this.start) / 1000);
-        const minutes = Math.floor(time / 60);
-        const seconds = time % 60;
-        this.progressTime.innerText = `${minutes}:${seconds < 10 ? 0 : ''}${seconds}`
-    }
-
-    finished(blob) {
-        const a = document.createElement('a');
-        a.classList.add('output');
-        a.target = '_blank';
-        a.href = URL.createObjectURL(blob);
-        document.body.appendChild(a);
-
-        const img = document.createElement('img');
-        img.src = a.href;
-        a.appendChild(img);
-    }
-
 }

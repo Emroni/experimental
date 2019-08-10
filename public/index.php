@@ -15,8 +15,7 @@
         <div class="actions">
             <button type="button" id="gif">GIF</button>
         </div>
-        <div id="progress-time"></div>
-        <div id="progress-bar"></div>
+        <div id="progress"></div>
 
         <script src="/build/<?= $project ?>.js"></script>
         <script src="http://localhost:35729/livereload.js"></script>
