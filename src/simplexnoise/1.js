@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import SimplexNoise from 'simplex-noise';
-import Recorder from '../../recorder';
+import Recorder from '../inc/recorder';
 
 const PI2 = 2 * Math.PI;
 const simplex = new SimplexNoise();
@@ -20,7 +20,7 @@ const container = new PIXI.ParticleContainer();
 app.stage.addChild(container);
 
 const particleShape = new PIXI.Graphics();
-particleShape.beginFill(0xFFFFFF, 0.1);
+particleShape.beginFill(0xFFFFFF, 0.2);
 particleShape.drawCircle(0, 0, 1);
 particleShape.endFill();
 const particleTexture = app.renderer.generateTexture(particleShape);

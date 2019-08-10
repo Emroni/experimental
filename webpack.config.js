@@ -2,39 +2,45 @@ const LiveReloadPlugin = require('webpack-livereload-plugin');
 const Path = require('path');
 const fs = require('fs-extra');
 
-module.exports = async () => {
-    const config = [];
+module.exports = () => {
 
-    const entries = await new Promise((resolve, reject) => {
-        fs.readdir(`src`, (error, data) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(data);
-            }
+    let latest = {
+        time: 0,
+    };
+
+    fs.readdirSync('src')
+        .filter(name => name !== 'base')
+        .forEach(project => {
+            fs.readdirSync(`src/${project}`)
+                .filter(name => !isNaN(name.replace('.js', '')))
+                .forEach(iteration => {
+                    const path = `./src/${project}/${iteration}`;
+                    const stats = fs.statSync(path);
+
+                    if (latest.time < stats.mtimeMs) {
+                        latest = {
+                            iteration: iteration.replace('.js', ''),
+                            path,
+                            project,
+                            time: stats.mtimeMs,
+                        };
+                    }
+                });
         });
-    });
-
-    for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i];
-        const name = entry.replace('.js', '');
-
-        config.push({
-            mode: 'development',
-            name: name,
-            entry: {
-                [name]: `./src/${name}/index.js`,
-            },
-            output: {
-                filename: '[name].js',
-                path: Path.resolve(__dirname, 'public/build') + '/',
-            },
-            plugins: [
-                new LiveReloadPlugin(),
-            ],
-        });
-
+    
+    return {
+        mode: 'development',
+        name: latest.project,
+        entry: {
+            [`${latest.project}-${latest.iteration}`]: latest.path,
+        },
+        output: {
+            filename: '[name].js',
+            path: Path.resolve(__dirname, 'public/build') + '/',
+        },
+        plugins: [
+            new LiveReloadPlugin(),
+        ],
     }
 
-    return config;
 };

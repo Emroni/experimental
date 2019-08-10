@@ -50,3 +50,7 @@ button {
     left: 0;
     z-index: 1;
 }
+
+.output * {
+    max-width: 100%;
+}
