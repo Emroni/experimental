@@ -29,7 +29,7 @@ app.post('/gif/add', (req, res) => {
 
 app.post('/gif/render', (req, res) => {
     const {delay, height, name, width} = req.body;
-    const path = `public/build/${name}.gif`;
+    const path = `/build/${name}.gif`;
 
     const encoder = new GIFEncoder(width, height);
     const stream = pngFileStream('temp/*.png')
@@ -38,13 +38,9 @@ app.post('/gif/render', (req, res) => {
             quality: 10,
             repeat: 0,
         }))
-        .pipe(fs.createWriteStream(path));
+        .pipe(fs.createWriteStream(`public${path}`));
 
     stream.on('finish', () => {
-        res.send(true);
+        res.send(path);
     });
 });
-
-
-
-

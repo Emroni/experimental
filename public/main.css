@@ -25,6 +25,19 @@ button {
     outline: none;
 }
 
+button[disabled] {
+    background-color: transparent;
+    color: #666;
+}
+
+button[disabled] span {
+    display: none;
+}
+
+button:not([disabled]) i {
+    display: none;
+}
+
 #progress {
     background-color: #666;
     position: absolute;
@@ -34,8 +47,8 @@ button {
     bottom: 0;
 }
 
-.output {
-    border: 1px solid #666;
+#output {
+    display: block;
     position: fixed;
     max-width: 25vw;
     top: 0;
@@ -43,6 +56,10 @@ button {
     z-index: 1;
 }
 
-.output * {
+#output[href] {
+    border: 1px solid #666;
+}
+
+#output * {
     max-width: 100%;
 }

@@ -19,6 +19,9 @@ export default class Recorder {
 
         this.progressBar = document.getElementById('progress');
 
+        this.output = document.getElementById('output');
+        this.outputImg = document.getElementById('output-img');
+
         this.gifButton = document.getElementById('gif');
         this.gifButton.onclick = this.record.bind(this);
 
@@ -61,12 +64,15 @@ export default class Recorder {
             requestAnimationFrame(this.snap);
 
         } else {
-            await axios.post(SERVER_GIF_RENDER, {
+            const response = await axios.post(SERVER_GIF_RENDER, {
                 name: PROJECT,
                 delay: 1000 / 60,
                 width: this.target.width,
                 height: this.target.height,
             });
+            
+            this.output.href = response.data;
+            this.outputImg.src = response.data;
 
             this.progressBar.style.width = 0;
             this.gifButton.disabled = false;
