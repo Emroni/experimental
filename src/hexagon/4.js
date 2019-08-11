@@ -2,10 +2,10 @@ import * as PIXI from 'pixi.js';
 import Recorder from '../inc/recorder';
 
 const PI2 = Math.PI * 2;
-const SIZE = 50;
-const BORDER = 2;
-const SPACING = 5;
-const ROWS = 13;
+const SIZE = 25;
+const BORDER = 1;
+const SPACING = 2;
+const ROWS = 20;
 
 const app = new PIXI.Application({
     antiAlias: true,
@@ -19,20 +19,20 @@ app.stage.addChild(container);
 
 const shape = new PIXI.Graphics();
 shape.beginFill(0);
-shape.moveTo(0, 0.5 * (SIZE + BORDER));
-shape.lineTo(0.4330125 * (SIZE + BORDER), 0.25 * (SIZE + BORDER));
-shape.lineTo(0.4330125 * (SIZE + BORDER), -0.25 * (SIZE + BORDER));
-shape.lineTo(0, -0.5 * (SIZE + BORDER));
-shape.lineTo(-0.4330125 * (SIZE + BORDER), -0.25 * (SIZE + BORDER));
-shape.lineTo(-0.4330125 * (SIZE + BORDER), 0.25 * (SIZE + BORDER));
-shape.endFill();
-shape.beginFill(0xFFFFFF);
 shape.moveTo(0, 0.5 * SIZE);
 shape.lineTo(0.4330125 * SIZE, 0.25 * SIZE);
 shape.lineTo(0.4330125 * SIZE, -0.25 * SIZE);
 shape.lineTo(0, -0.5 * SIZE);
 shape.lineTo(-0.4330125 * SIZE, -0.25 * SIZE);
 shape.lineTo(-0.4330125 * SIZE, 0.25 * SIZE);
+shape.endFill();
+shape.beginFill(0xFFFFFF);
+shape.moveTo(0, 0.5 * (SIZE - BORDER));
+shape.lineTo(0.4330125 * (SIZE - BORDER), 0.25 * (SIZE - BORDER));
+shape.lineTo(0.4330125 * (SIZE - BORDER), -0.25 * (SIZE - BORDER));
+shape.lineTo(0, -0.5 * (SIZE - BORDER));
+shape.lineTo(-0.4330125 * (SIZE - BORDER), -0.25 * (SIZE - BORDER));
+shape.lineTo(-0.4330125 * (SIZE - BORDER), 0.25 * (SIZE - BORDER));
 shape.endFill();
 const texture = app.renderer.generateTexture(shape);
 
@@ -52,8 +52,8 @@ for (let i = 0; i <= ROWS; i++) {
 }
 
 function add(row, x, y) {
-    x = (x - 2.125) * ((SIZE * 0.4330125) + SPACING) + app.view.width / 2;
-    y = (y - 0.05) * ((SIZE * 0.75) + SPACING) + app.view.height / 2;
+    x = (x - 2) * ((SIZE * 0.4330125) + SPACING) + app.view.width / 2;
+    y = y * ((SIZE * 0.75) + SPACING) + app.view.height / 2;
 
     if (x <= -SIZE / 2 || x >= app.view.width + SIZE / 2 || y < -SIZE / 2 || y >= app.view.height + SIZE / 2) {
         return;
@@ -72,12 +72,12 @@ function add(row, x, y) {
 }
 
 new Recorder({
-    duration: 5,
+    duration: 3.5,
     target: app.view,
     render: (tick) => {
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
-            const alpha = Math.sin(PI2 * (tick - i / rows.length)) + 0.5;
+            const alpha = 1.5 - Math.max(0.5, Math.sin(PI2 * (tick - i / rows.length) + (i % 2 ? 1 : 3)));
 
             for (let j = 0; j < row.length; j++) {
                 let hex = row[j];
