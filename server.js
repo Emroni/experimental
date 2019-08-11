@@ -8,8 +8,12 @@ const pngFileStream = require('png-file-stream');
 const app = express();
 app.use(bodyParser.urlencoded({
     extended: false,
+    limit: '50mb',
 }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+    extended: false,
+    limit: '50mb',
+}));
 app.use(cors());
 app.listen(3000);
 
