@@ -36,7 +36,7 @@ export default class Recorder {
     }
 
     renderTick() {
-        this.render(this.time / this.duration);
+        this.render((this.time / this.duration) % 1);
         this.time += this.increment;
     }
 
