@@ -9,6 +9,7 @@ export default class Recorder {
 
     constructor(options) {
         this.duration = options.duration || 1;
+        this.fps = options.fps || 60;
         this.render = options.render;
         this.target = options.target;
         this.time = options.time || 0;
@@ -49,24 +50,25 @@ export default class Recorder {
     }
 
     async snap() {
-        if (this.framesIndex) {
-            await axios.post(SERVER_GIF_ADD, {
-                index: this.framesIndex,
-                data: this.target.toDataURL('image/png'),
-            });
-        }
-
         this.framesIndex++;
         this.progressBar.style.width = `${100 * (this.framesIndex - 1) / this.framesTarget}vw`;
 
         if (this.framesIndex <= this.framesTarget) {
-            this.renderTick();
             requestAnimationFrame(this.snap);
+            this.renderTick();
+
+            const n = this.framesIndex / (60 / this.fps);
+            if (Math.floor(n) === n) {
+                await axios.post(SERVER_GIF_ADD, {
+                    index: this.framesIndex,
+                    data: this.target.toDataURL('image/png'),
+                });
+            }
 
         } else {
             const response = await axios.post(SERVER_GIF_RENDER, {
                 name: PROJECT,
-                delay: 1000 / 60,
+                delay: Math.ceil(1000 / this.fps),
                 width: this.target.width,
                 height: this.target.height,
             });
