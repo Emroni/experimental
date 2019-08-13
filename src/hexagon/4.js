@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Recorder from '../inc/recorder';
+import Recorder from '../recorder';
 
 const PI2 = Math.PI * 2;
 const SIZE = 25;

@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "serve": "node server.js",
+        "serve": "node src/server.js",
         "watch": "node_modules/.bin/webpack --config webpack.config.js --progress --colors --watch"
     },
     "dependencies": {

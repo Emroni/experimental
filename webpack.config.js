@@ -10,7 +10,7 @@ module.exports = () => {
     };
 
     fs.readdirSync('src')
-        .filter(name => name !== 'base')
+        .filter(name => name.substr(-3, 3) !== '.js')
         .forEach(project => {
             fs.readdirSync(`src/${project}`)
                 .filter(name => !isNaN(name.replace('.js', '')))

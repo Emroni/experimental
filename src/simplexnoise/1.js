@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import SimplexNoise from 'simplex-noise';
-import Recorder from '../inc/recorder';
+import Recorder from '../recorder';
 
 const PI2 = 2 * Math.PI;
 const simplex = new SimplexNoise();

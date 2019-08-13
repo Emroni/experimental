@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Recorder from '../inc/recorder';
+import Recorder from '../recorder';
 
 const FRAME = 640;
 const FACES = 200;
