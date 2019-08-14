@@ -11,7 +11,7 @@ canvas {
     transform: translate(-50%, -50%);
 }
 
-.actions {
+#actions {
     position: fixed;
     padding: 10px;
     width: 100%;
@@ -48,7 +48,6 @@ button:not([disabled]) i {
 }
 
 #output {
-    display: block;
     position: fixed;
     max-width: 25vw;
     top: 0;
@@ -61,5 +60,6 @@ button:not([disabled]) i {
 }
 
 #output * {
+    display: none;
     max-width: 100%;
 }

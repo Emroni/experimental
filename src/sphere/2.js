@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import Recorder from '../recorder';
 
-const FRAME = 540;
+const FRAME = 640;
 const FACES = 200;
 const RADIUS = 180;
 const SIZE = 35;
@@ -56,7 +56,6 @@ for (let i = 0; i < FACES; i++) {
 
 new Recorder({
     duration: 10,
-    fps: 30,
     target: renderer.domElement,
     render: (tick) => {
         container.rotation.y = PI2 * tick;

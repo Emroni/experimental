@@ -4,6 +4,7 @@ const express = require('express');
 const fs = require('fs-extra');
 const GIFEncoder = require('gifencoder');
 const pngFileStream = require('png-file-stream');
+const ffmpeg = require('fluent-ffmpeg');
 
 const app = express();
 app.use(bodyParser.urlencoded({
@@ -23,7 +24,7 @@ app.get('/clean', (req, res) => {
     });
 });
 
-app.post('/gif/add', (req, res) => {
+app.post('/add', (req, res) => {
     const {data, index} = req.body;
     const base64 = data.substr(22);
     const n = (index < 1000 ? '0' : '') + (index < 100 ? '0' : '') + (index < 10 ? '0' : '') + index;
@@ -31,14 +32,14 @@ app.post('/gif/add', (req, res) => {
     res.send(true);
 });
 
-app.post('/gif/render', (req, res) => {
-    const {delay, height, name, width} = req.body;
+app.post('/gif', (req, res) => {
+    const {fps, height, name, width} = req.body;
     const path = `/build/${name}.gif`;
 
     const encoder = new GIFEncoder(width, height);
     const stream = pngFileStream('temp/*.png')
         .pipe(encoder.createWriteStream({
-            delay,
+            delay: Math.ceil(1000 / fps),
             quality: 10,
             repeat: 0,
         }))
@@ -47,4 +48,17 @@ app.post('/gif/render', (req, res) => {
     stream.on('finish', () => {
         res.send(path);
     });
+});
+
+app.post('/mp4', (req, res) => {
+    const {fps, name} = req.body;
+    const path = `/build/${name}.mp4`;
+
+    ffmpeg('temp/%04d.png')
+        .output(`public${path}`)
+        .withFpsInput(fps)
+        .on('end', () => {
+            res.send(path);
+        })
+        .run();
 });

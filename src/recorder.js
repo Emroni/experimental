@@ -2,8 +2,7 @@ import axios from 'axios';
 
 const SERVER = 'http://localhost:3000';
 const SERVER_CLEAN = `${SERVER}/clean`;
-const SERVER_GIF_ADD = `${SERVER}/gif/add`;
-const SERVER_GIF_RENDER = `${SERVER}/gif/render`;
+const SERVER_ADD = `${SERVER}/add`;
 
 export default class Recorder {
 
@@ -20,11 +19,15 @@ export default class Recorder {
 
         this.progressBar = document.getElementById('progress');
 
+        this.gifButton = document.getElementById('record-gif');
+        this.gifButton.onclick = this.record.bind(this);
+
+        this.mp4Button = document.getElementById('record-mp4');
+        this.mp4Button.onclick = this.record.bind(this);
+
         this.output = document.getElementById('output');
         this.outputImg = document.getElementById('output-img');
-
-        this.gifButton = document.getElementById('gif');
-        this.gifButton.onclick = this.record.bind(this);
+        this.outputVideo = document.getElementById('output-video');
 
         this.snap = this.snap.bind(this);
         this.tick = this.tick.bind(this);
@@ -41,9 +44,18 @@ export default class Recorder {
         this.time += this.increment;
     }
 
-    record() {
-        this.gifButton.disabled = true;
+    record(e) {
+        this.recordType = e.currentTarget.id.replace('record-', '');
         cancelAnimationFrame(this.frameRequest);
+
+        this.gifButton.disabled = true;
+        this.mp4Button.disabled = true;
+
+        this.output.href = null;
+        this.outputImg.src = null;
+        this.outputImg.style.display = null;
+        this.outputVideo.src = null;
+        this.outputVideo.style.display = null;
 
         axios.get(SERVER_CLEAN)
             .then(this.snap);
@@ -59,25 +71,35 @@ export default class Recorder {
 
             const n = this.framesIndex / (60 / this.fps);
             if (Math.floor(n) === n) {
-                await axios.post(SERVER_GIF_ADD, {
+                await axios.post(SERVER_ADD, {
                     index: this.framesIndex,
                     data: this.target.toDataURL('image/png'),
                 });
             }
 
         } else {
-            const response = await axios.post(SERVER_GIF_RENDER, {
+            const response = await axios.post(`${SERVER}/${this.recordType}`, {
                 name: PROJECT,
-                delay: Math.ceil(1000 / this.fps),
+                fps: this.fps,
                 width: this.target.width,
                 height: this.target.height,
             });
-            
+
             this.output.href = response.data;
-            this.outputImg.src = response.data;
+            switch (this.recordType) {
+                case 'gif':
+                    this.outputImg.src = response.data;
+                    this.outputImg.style.display = 'block';
+                    break;
+                case 'mp4':
+                    this.outputVideo.src = response.data;
+                    this.outputVideo.style.display = 'block';
+                    break;
+            }
 
             this.progressBar.style.width = 0;
             this.gifButton.disabled = false;
+            this.mp4Button.disabled = false;
             this.tick();
         }
     }
