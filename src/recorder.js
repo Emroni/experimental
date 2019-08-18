@@ -8,14 +8,16 @@ export default class Recorder {
 
     constructor(options) {
         this.duration = options.duration || 1;
-        this.fps = options.fps || 60;
+        this.fps = options.fps || 30;
         this.render = options.render;
         this.target = options.target;
         this.time = options.time || 0;
 
-        this.increment = 1 / 60;
+        this.incrementRender = 1 / 60;
+        this.incrementRecord = 1 / this.fps;
+
         this.framesIndex = -1;
-        this.framesTarget = this.duration * 60;
+        this.framesTarget = this.duration * this.fps;
 
         this.progressBar = document.getElementById('progress');
 
@@ -36,12 +38,12 @@ export default class Recorder {
 
     tick() {
         this.frameRequest = requestAnimationFrame(this.tick);
-        this.renderTick();
+        this.renderTick(this.incrementRender);
     }
 
-    renderTick() {
+    renderTick(increment) {
         this.render((this.time / this.duration) % 1);
-        this.time += this.increment;
+        this.time += increment;
     }
 
     record(e) {
@@ -67,10 +69,9 @@ export default class Recorder {
 
         if (this.framesIndex <= this.framesTarget) {
             requestAnimationFrame(this.snap);
-            this.renderTick();
+            this.renderTick(this.incrementRecord);
 
-            const n = this.framesIndex / (60 / this.fps);
-            if (this.framesIndex && Math.floor(n) === n) {
+            if (this.framesIndex) {
                 await axios.post(SERVER_ADD, {
                     index: this.framesIndex,
                     data: this.target.toDataURL('image/png'),
