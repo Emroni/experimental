@@ -8,8 +8,17 @@
     </head>
     <body>
         <?php
-        $project = str_replace('/', '-', $_SERVER['REQUEST_URI']);
-        $project = substr($project, 1);
+
+        if (strlen($_SERVER['REQUEST_URI']) > 1) {
+            $project = str_replace('/', '-', $_SERVER['REQUEST_URI']);
+            $project = 'build/' . substr($project, 1) . '.js';
+        } else {
+            $files = glob('build/*.js');
+            $files = array_combine($files, array_map('filemtime', $files));
+            arsort($files);
+            $project = key($files);
+        }
+        
         ?>
 
         <div id="actions">
@@ -22,7 +31,7 @@
             <video id="output-video" autoplay loop>
         </a>
 
-        <script src="/build/<?= $project ?>.js"></script>
+        <script src="/<?= $project ?>"></script>
         <script src="http://localhost:35729/livereload.js"></script>
     </body>
 </html>
