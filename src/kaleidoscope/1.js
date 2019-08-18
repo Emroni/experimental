@@ -1,25 +1,4 @@
-import { Shape, PI2, RADIUS } from './base';
-
-const COLORS = [
-    0xf44336,
-    0xe91e63,
-    0x9c27b0,
-    0x9673ab7,
-    0x3f51b5,
-    0x2196f3,
-    0x03a9f4,
-    0x03a9f4,
-    0x00bcd4,
-    0x009688,
-    0x4caf50,
-    0x8bc34a,
-    0xcddc39,
-    0xffeb3b,
-    0xffc107,
-    0xff9800,
-    0xff5722,
-    0x795548,
-];
+import { Shape, COLORS, PI2, RADIUS } from './base';
 
 for (let i = 0; i < COLORS.length; i++) {
     const layer = i / COLORS.length;
@@ -45,4 +24,3 @@ for (let i = 0; i < COLORS.length; i++) {
         shape.scale.x = shape.scale.y = Math.pow((speed * tick + layer * 5) % 1, 3);
     });
 }
-
