@@ -14,7 +14,7 @@ export default class Recorder {
         this.time = options.time || 0;
 
         this.increment = 1 / 60;
-        this.framesIndex = 0;
+        this.framesIndex = -1;
         this.framesTarget = this.duration * 60;
 
         this.progressBar = document.getElementById('progress');
@@ -70,7 +70,7 @@ export default class Recorder {
             this.renderTick();
 
             const n = this.framesIndex / (60 / this.fps);
-            if (Math.floor(n) === n) {
+            if (this.framesIndex && Math.floor(n) === n) {
                 await axios.post(SERVER_ADD, {
                     index: this.framesIndex,
                     data: this.target.toDataURL('image/png'),
