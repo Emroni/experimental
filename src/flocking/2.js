@@ -1,6 +1,6 @@
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -104,7 +104,7 @@ for (let i = 0; i < ROWS; i++) {
     new Shape(i / ROWS);
 }
 
-new Recorder({
+Recorder.setup({
     duration: 10,
     target: renderer.domElement,
     render: (tick) => {

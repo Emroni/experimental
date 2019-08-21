@@ -1,5 +1,8 @@
 body {
     background-color: #111;
+    color: #666;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.75em;
     margin: 0;
 }
 
@@ -11,55 +14,70 @@ canvas {
     transform: translate(-50%, -50%);
 }
 
-#actions {
-    position: fixed;
-    padding: 10px;
-    width: 100%;
-    left: 0;
-    bottom: 0;
+.loading {
+    pointer-events: none;
 }
 
-button {
+.loading canvas {
+    opacity: 0.5;
+}
+
+.controls {
+    padding: 0.5em;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+.controls > * {
+    margin-right: 0.5em;
+}
+
+button, input {
     border: none;
     background-color: #666;
     outline: none;
 }
 
-button[disabled] {
+button:focus, input:focus {
+    background-color: #ccc;
+}
+
+button[disabled], input[disabled] {
     background-color: transparent;
     color: #666;
 }
 
-button[disabled] span {
-    display: none;
+input {
+    width: 4em;
 }
 
-button:not([disabled]) i {
-    display: none;
-}
-
-#progress {
+.progress {
     background-color: #666;
     position: absolute;
-    height: 1px;
+    height: 2px;
     width: 0;
     left: 0;
     bottom: 0;
 }
 
-#output {
+.output {
+    color: #666;
+    text-decoration: none;
     position: fixed;
-    max-width: 25vw;
     top: 0;
     left: 0;
     z-index: 1;
 }
 
-#output[href] {
-    border: 1px solid #666;
+.output span {
+    display: block;
+    padding: 0.5em;
 }
 
-#output * {
-    display: none;
-    max-width: 100%;
+.output img, .output video {
+    border: 1px solid #666;
+    max-width: 25vw;
 }

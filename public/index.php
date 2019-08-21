@@ -21,16 +21,6 @@
         
         ?>
 
-        <div id="actions">
-            <button type="button" id="record-gif">GIF</button>
-            <button type="button" id="record-mp4">MP4</button>
-        </div>
-        <div id="progress"></div>
-        <a id="output" target="_blank">
-            <img id="output-img">
-            <video id="output-video" autoplay loop>
-        </a>
-
         <script src="/<?= $project ?>"></script>
         <script src="http://localhost:35729/livereload.js"></script>
     </body>
