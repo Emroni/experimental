@@ -76,9 +76,12 @@ app.post('/mp4', (req, res) => {
     const file = `/build/${name}.mp4`;
 
     ffmpeg('temp/%04d.png')
-        .output(`public${file}`)
-        .size(`${size}x${size}`)
         .withFpsInput(fps)
+        .inputOption('-pix_fmt yuv420p')
+        .videoCodec('libx264')
+        .withFPSOutput(fps)
+        .size(`${size}x${size}`)
+        .output(`public${file}`)
         .on('end', () => {
             respond(res, file, 'video');
         })
