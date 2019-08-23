@@ -38,15 +38,20 @@ app.post('/add', (req, res) => {
 
     fs.outputFileSync(file, data.substr(22), 'base64');
 
-    im.resize({
-        srcPath: file,
-        dstPath: file,
-        width: size,
-        height: size,
-        quality: 1,
-    }, () => {
+    if (size !== 640) {
+        im.resize({
+            srcPath: file,
+            dstPath: file,
+            width: size,
+            height: size,
+            quality: 1,
+        }, () => {
+            res.send(true);
+        });
+
+    } else {
         res.send(true);
-    });
+    }
 });
 
 app.post('/gif', (req, res) => {
@@ -56,7 +61,7 @@ app.post('/gif', (req, res) => {
     const encoder = new GIFEncoder(size, size);
     const stream = pngFileStream('temp/*.png')
         .pipe(encoder.createWriteStream({
-            delay: Math.ceil(1000 / fps),
+            delay: Math.max(2, Math.round(1000 / fps)),
             repeat: 0,
         }))
         .pipe(fs.createWriteStream(`public${file}`));
