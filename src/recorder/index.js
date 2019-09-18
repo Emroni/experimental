@@ -18,8 +18,16 @@ export function setup(options) {
     duration = options.duration || 10;
     render = options.render;
     target = options.target;
+    
+    window.addEventListener('resize', resize);
+    resize();
 
     play();
+}
+
+function resize() {
+    const scale = Math.min(1, (window.innerWidth - 20) / target.width, (window.innerHeight - 100) / target.height);
+    target.style.transform = `translate(-50%, -50%) scale(${scale})`
 }
 
 export function play() {
