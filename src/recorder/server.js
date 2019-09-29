@@ -23,7 +23,7 @@ app.post('/clean', (req, res) => {
     const {name} = req.body;
     const path = `public/build/${name}`;
 
-    fs.removeSync('temp');
+    fs.removeSync('public/export/temp');
     fs.removeSync(`${path}.gif`);
     fs.removeSync(`${path}.mp4`);
 
@@ -31,35 +31,32 @@ app.post('/clean', (req, res) => {
 });
 
 app.post('/add', (req, res) => {
-    const {data, index, size} = req.body;
+    const {data, index, resize, size} = req.body;
 
     const n = (index < 1000 ? '0' : '') + (index < 100 ? '0' : '') + (index < 10 ? '0' : '') + index;
-    const file = `temp/${n}.png`;
+    const file = `public/export/temp/${n}.png`;
+
+    res.send(true);
 
     fs.outputFileSync(file, data.substr(22), 'base64');
 
-    if (size !== 640) {
+    if (resize) {
         im.resize({
             srcPath: file,
             dstPath: file,
             width: size,
             height: size,
             quality: 1,
-        }, () => {
-            res.send(true);
         });
-
-    } else {
-        res.send(true);
     }
 });
 
 app.post('/gif', (req, res) => {
     const {fps, name, size} = req.body;
-    const file = `/build/${name}.gif`;
+    const file = `/export/${name}.gif`;
 
     const encoder = new GIFEncoder(size, size);
-    const stream = pngFileStream('temp/*.png')
+    const stream = pngFileStream('public/export/temp/*.png')
         .pipe(encoder.createWriteStream({
             delay: Math.max(2, Math.round(1000 / fps)),
             repeat: 0,
@@ -73,9 +70,9 @@ app.post('/gif', (req, res) => {
 
 app.post('/mp4', (req, res) => {
     const {fps, name, size} = req.body;
-    const file = `/build/${name}.mp4`;
+    const file = `/export/${name}.mp4`;
 
-    ffmpeg('temp/%04d.png')
+    ffmpeg('public/export/temp/%04d.png')
         .withFpsInput(fps)
         .inputOption('-pix_fmt yuv420p')
         .videoCodec('libx264')

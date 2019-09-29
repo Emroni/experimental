@@ -56,19 +56,19 @@ function tick() {
 async function snap() {
     recordIndex++;
 
-    if (recordIndex <= recordFrames) {
-        requestAnimationFrame(snap);
-
+    if (recordIndex < recordFrames) {
         render(recordIncrement * recordIndex);
         Controls.progress(recordIndex, recordFrames);
 
-        if (recordIndex) {
-            await axios.post('http://localhost:3000/add', {
-                data: target.toDataURL('image/png'),
-                index: recordIndex,
-                size: Controls.sizeInput.value,
-            });
-        }
+        const size = parseInt(Controls.sizeInput.value);
+        await axios.post('http://localhost:3000/add', {
+            data: target.toDataURL('image/png'),
+            index: recordIndex,
+            resize: target.width !== size,
+            size,
+        });
+
+        snap();
 
     } else {
         recordComplete();
