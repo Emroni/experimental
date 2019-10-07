@@ -5,6 +5,7 @@ const INCREMENT = 1 / 60;
 
 export let target;
 
+let delay;
 let duration;
 let frameRequest;
 let recordComplete;
@@ -15,10 +16,11 @@ let render;
 let time;
 
 export function setup(options) {
+    delay = options.delay || 0;
     duration = options.duration || 10;
     render = options.render;
     target = options.target;
-    
+
     window.addEventListener('resize', resize);
     resize();
 
@@ -41,7 +43,7 @@ export function record(onComplete) {
 
     recordComplete = onComplete;
     recordIncrement = 1 / duration / Controls.fpsInput.value;
-    recordIndex = -1;
+    recordIndex = -1 - delay * Controls.fpsInput.value;
     recordFrames = duration * Controls.fpsInput.value;
 
     snap();
@@ -58,17 +60,23 @@ async function snap() {
 
     if (recordIndex < recordFrames) {
         render(recordIncrement * recordIndex);
-        Controls.progress(recordIndex, recordFrames);
 
-        const size = parseInt(Controls.sizeInput.value);
-        await axios.post('http://localhost:3000/add', {
-            data: target.toDataURL('image/png'),
-            index: recordIndex,
-            resize: target.width !== size,
-            size,
-        });
+        if (recordIndex < 0) {
+            requestAnimationFrame(snap);
 
-        snap();
+        } else {
+            Controls.progress(recordIndex, recordFrames);
+
+            const size = parseInt(Controls.sizeInput.value);
+            await axios.post('http://localhost:3000/add', {
+                data: target.toDataURL('image/png'),
+                index: recordIndex,
+                resize: target.width !== size,
+                size,
+            });
+
+            snap();
+        }
 
     } else {
         recordComplete();
