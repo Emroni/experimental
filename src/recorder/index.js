@@ -1,8 +1,6 @@
 import axios from 'axios';
 import * as Controls from './controls';
 
-const INCREMENT = 1 / 60;
-
 export let target;
 
 let delay;
@@ -29,12 +27,12 @@ export function setup(options) {
 
 function resize() {
     const scale = Math.min(1, (window.innerWidth - 20) / target.width, (window.innerHeight - 100) / target.height);
-    target.style.transform = `translate(-50%, -50%) scale(${scale})`
+    target.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
 export function play() {
     cancelAnimationFrame(frameRequest);
-    time = 0;
+    time = performance.now();
     tick();
 }
 
@@ -51,15 +49,16 @@ export function record(onComplete) {
 
 function tick() {
     frameRequest = requestAnimationFrame(tick);
-    time += INCREMENT;
-    render((time / duration) % 1);
+    const t = (((performance.now() - time) / 1000) / duration) % 1;
+    render(t, t * duration);
 }
 
 async function snap() {
     recordIndex++;
 
     if (recordIndex < recordFrames) {
-        render(recordIncrement * recordIndex);
+        const t = (recordIncrement * recordIndex) % 1;
+        render(t, t * duration);
 
         if (recordIndex < 0) {
             requestAnimationFrame(snap);
