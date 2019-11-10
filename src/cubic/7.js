@@ -55,7 +55,7 @@ meshGeometry.computeVertexNormals();
 meshGeometry.scale(WIDE / 2, WIDE / 2, WIDE / 2);
 
 const meshMaterial = new THREE.MeshPhongMaterial({
-    map: new THREE.TextureLoader().load('textures/cubic-7.png'),
+    map: new THREE.TextureLoader().load('textures/metal-1.png'),
 });
 
 const mesh = new THREE.InstancedMesh(meshGeometry, meshMaterial, (ROWS * 2 + 1) * ROWS * ROWS + 1);
