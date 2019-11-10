@@ -7,16 +7,18 @@ let delay;
 let duration;
 let frameRequest;
 let recordComplete;
-let recordIndex;
-let recordIncrement;
 let recordFrames;
+let recordIncrement;
+let recordIndex;
 let render;
+let skip;
 let time;
 
 export function setup(options) {
     delay = options.delay || 0;
     duration = options.duration || 10;
     render = options.render;
+    skip = options.skip || 0;
     target = options.target;
 
     window.addEventListener('resize', resize);
@@ -57,7 +59,7 @@ async function snap() {
     recordIndex++;
 
     if (recordIndex < recordFrames) {
-        const t = (recordIncrement * recordIndex) % 1;
+        const t = (recordIncrement * (recordIndex + skip * Controls.fpsInput.value)) % 1;
         render(t, t * duration);
 
         if (recordIndex < 0) {
