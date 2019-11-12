@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import SimplexNoise from 'simplex-noise';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 const PI2 = 2 * Math.PI;
 const simplex = new SimplexNoise();
@@ -30,7 +30,7 @@ for (let i = 0; i < 2000; i++) {
     container.addChild(particle);
 }
 
-new Recorder({
+Recorder.init({
     duration: 5,
     target: app.view,
     render: (tick) => {

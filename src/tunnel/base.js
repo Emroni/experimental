@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 export const PI2 = Math.PI * 2;
 export const DEPTH = 1000;
@@ -67,7 +67,7 @@ export class Shape extends THREE.Object3D {
     }
 }
 
-new Recorder({
+Recorder.init({
     duration: 10,
     target: renderer.domElement,
     render: (tick) => {

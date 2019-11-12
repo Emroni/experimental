@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import SimplexNoise from 'simplex-noise';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 const PI2 = 2 * Math.PI;
 const ROWS = 3;
@@ -40,7 +40,7 @@ for (let i = 0; i < ROWS; i++) {
     }
 }
 
-new Recorder({
+Recorder.init({
     duration: 10,
     target: app.view,
     render: (tick) => {

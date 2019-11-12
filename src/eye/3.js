@@ -154,7 +154,7 @@ for (let i = 0; i < 1000; i++) {
 
 
 
-Recorder.setup({
+Recorder.init({
     duration: 5,
     target: renderer.domElement,
     render: (tick) => {

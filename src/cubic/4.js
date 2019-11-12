@@ -86,7 +86,7 @@ function ease(t, b = 0, c = 1, d = 1) {
     return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
 }
 
-Recorder.setup({
+Recorder.init({
     duration: 3,
     fps: 60,
     target: renderer.domElement,

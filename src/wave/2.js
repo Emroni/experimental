@@ -115,7 +115,7 @@ for (let i = 0; i < SHAPES; i++) {
     container.add(shape);
 }
 
-Recorder.setup({
+Recorder.init({
     duration: 20,
     fps: 60,
     target: renderer.domElement,

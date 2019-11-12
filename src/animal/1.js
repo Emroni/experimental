@@ -154,7 +154,7 @@ const paths = [
     }),
 ];
 
-Recorder.setup({
+Recorder.init({
     duration: 30,
     skip: 13,
     target: renderer.domElement,

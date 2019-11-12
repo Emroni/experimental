@@ -112,7 +112,7 @@ triangle.position.z = -2500;
 triangle.rotation.x = Math.PI / 2;
 triangle.rotation.y = Math.PI;
 
-Recorder.setup({
+Recorder.init({
     duration: 10,
     target: renderer.domElement,
     render: (tick) => {

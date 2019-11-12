@@ -152,7 +152,7 @@ function ease(t, b = 0, c = 1, d = 1) {
     return c / 2 * ((t -= 2) * t * t + 2) + b;
 }
 
-Recorder.setup({
+Recorder.init({
     duration: 12,
     target: renderer.domElement,
     render: (tick) => {

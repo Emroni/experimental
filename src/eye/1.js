@@ -95,7 +95,7 @@ for (let i = 0; i < SHAPES; i++) {
     new Shape(i / SHAPES);
 }
 
-Recorder.setup({
+Recorder.init({
     duration: 10,
     target: renderer.domElement,
     render: (tick) => {

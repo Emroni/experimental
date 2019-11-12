@@ -104,7 +104,7 @@ for (let i = 0; i < ROWS; i++) {
     new Shape(i / ROWS);
 }
 
-Recorder.setup({
+Recorder.init({
     duration: 10,
     target: renderer.domElement,
     render: (tick) => {

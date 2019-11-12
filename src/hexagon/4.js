@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 const PI2 = Math.PI * 2;
 const SIZE = 25;
@@ -71,7 +71,7 @@ function add(row, x, y) {
     sprite.position.y = -sprite.height / 2;
 }
 
-new Recorder({
+Recorder.init({
     duration: 3.5,
     target: app.view,
     render: (tick) => {

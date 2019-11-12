@@ -1,6 +1,6 @@
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 export const PI2 = Math.PI * 2;
 export const SIZE = 640;
@@ -82,7 +82,7 @@ for (let x = 0; x < SHAPE_ROW; x++) {
 
 const simplex = new SimplexNoise();
 
-new Recorder({
+Recorder.init({
     duration: 10,
     target: renderer.domElement,
     render: (tick) => {

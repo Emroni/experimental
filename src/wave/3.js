@@ -110,7 +110,7 @@ const grids = [
 ];
 
 
-Recorder.setup({
+Recorder.init({
     duration: 30,
     target: renderer.domElement,
     render: (tick) => {

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 const FRAME = 640;
 const FACES = 200;
@@ -54,7 +54,7 @@ for (let i = 0; i < FACES; i++) {
     face.lookAt(0, 0, 0);
 }
 
-new Recorder({
+Recorder.init({
     duration: 10,
     target: renderer.domElement,
     render: (tick) => {

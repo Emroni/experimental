@@ -97,7 +97,7 @@ for (let x = 0; x < ROWS; x++) {
 const raycaster = new THREE.Raycaster();
 const ray = new THREE.Vector3(0, 1, 0);
 
-Recorder.setup({
+Recorder.init({
     delay: 1,
     duration: 20,
     fps: 60,

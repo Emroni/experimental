@@ -124,7 +124,7 @@ for (let i = 0; i < LAYERS; i++) {
     scene.add(layer);
 }
 
-Recorder.setup({
+Recorder.init({
     duration: 20,
     fps: 60,
     target: renderer.domElement,

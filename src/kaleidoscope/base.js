@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 export const PI2 = Math.PI * 2;
 export const SIZE = 640;
@@ -92,7 +92,7 @@ export class Shape extends PIXI.Container {
 }
 
 
-new Recorder({
+Recorder.init({
     duration: 10,
     target: app.view,
     render: (tick) => {

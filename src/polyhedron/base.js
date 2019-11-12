@@ -1,6 +1,6 @@
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 const FRAME = 640;
 const PARTICLES = 10000;
@@ -73,7 +73,7 @@ export function run(shape, layers, spread) {
 
     const simplex = new SimplexNoise();
 
-    new Recorder({
+    Recorder.init({
         duration: 10,
         target: renderer.domElement,
         render: (tick) => {

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Recorder from '../recorder';
+import * as Recorder from '../recorder';
 
 export const PI2 = Math.PI * 2;
 export const PI_HALF = Math.PI / 2;
@@ -107,7 +107,7 @@ for (let x = 0; x < PARTICLE_ROW; x++) {
     }
 }
 
-new Recorder({
+Recorder.init({
     duration: 12,
     target: renderer.domElement,
     render: (tick) => {

@@ -133,7 +133,7 @@ for (let i = 0; i < 3; i++) {
 
 }
 
-Recorder.setup({
+Recorder.init({
     duration: 10,
     target: renderer.domElement,
     render: (tick) => {

@@ -6,77 +6,17 @@ body {
     margin: 0;
 }
 
-canvas {
+body > canvas {
     display: block;
     position: absolute;
     left: 50vw;
     top: 50vh;
 }
 
-.loading {
-    pointer-events: none;
+.dg.ac {
+    z-index: 1 !important;
 }
 
-.loading canvas {
-    opacity: 0.5;
-}
-
-.controls {
-    padding: 0.5em;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    z-index: 1;
-}
-
-.controls > * {
-    margin-right: 0.5em;
-}
-
-button, input {
-    border: none;
-    background-color: #666;
-    outline: none;
-}
-
-button:focus, input:focus {
-    background-color: #ccc;
-}
-
-button[disabled], input[disabled] {
-    background-color: transparent;
-    color: #666;
-}
-
-input {
-    width: 4em;
-}
-
-.progress {
-    background-color: #666;
-    position: absolute;
-    height: 2px;
-    width: 0;
-    left: 0;
-    bottom: 0;
-}
-
-.output {
-    color: #666;
-    text-decoration: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-
-.output span {
-    display: block;
-    padding: 0.5em;
-}
-
-.output img, .output video {
-    border: 1px solid #666;
-    max-width: 25vw;
+.dg.ac .close-button {
+    display: none;
 }

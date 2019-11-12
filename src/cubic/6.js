@@ -160,7 +160,7 @@ for (let i = 0; i < COUNT; i++) {
     container.add(shape);
 }
 
-Recorder.setup({
+Recorder.init({
     duration: 30,
     target: renderer.domElement,
     render: (tick) => {
