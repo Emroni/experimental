@@ -20,7 +20,7 @@
         }
         
         ?>
-
+        <div id="progress"></div>
         <script src="/<?= $project ?>"></script>
         <script src="http://localhost:35729/livereload.js"></script>
     </body>

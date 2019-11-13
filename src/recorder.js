@@ -12,6 +12,7 @@ export const controls = {
 export let target;
 
 let frameRequest;
+let progress;
 let recordButton;
 let recording;
 let render;
@@ -22,6 +23,7 @@ let time;
 export function init(options) {
     target = options.target;
     render = options.render;
+    progress = options.progress && document.getElementById('progress');
 
     controls.duration = options.duration || 10;
     controls.skip = options.skip || 0;
@@ -36,7 +38,7 @@ export function init(options) {
     recorderFolder.add(controls, 'play');
     recordButton = recorderFolder.add(controls, 'record');
     saveButton = recorderFolder.add(controls, 'save');
-    
+
     if (options.change !== undefined) {
         recorderFolder.__controllers.forEach(controller => {
             controller.onChange(val => {
@@ -131,12 +133,11 @@ export function play() {
 
 function tick() {
     frameRequest = requestAnimationFrame(tick);
-    if (controls.play) {
-        const t = (((performance.now() - time) / 1000 + controls.skip) / controls.duration) % 1;
-        render(t);
+    const t = controls.play ? ((((performance.now() - time) / 1000 + controls.skip) / controls.duration) % 1) : (controls.skip / controls.duration);
+    render(t);
 
-    } else {
-        render(controls.skip / controls.duration);
+    if (progress) {
+        progress.style.width = (100 * t) + '%';
     }
 }
 

@@ -48,3 +48,11 @@ body > canvas {
 .dg.ac:not(:hover):not(:focus-within) .main {
     display: none;
 }
+
+#progress {
+    background-color: #333;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+}
