@@ -126,7 +126,6 @@ for (let i = 0; i < LAYERS; i++) {
 
 Recorder.init({
     duration: 20,
-    fps: 60,
     target: renderer.domElement,
     render: (tick) => {
         light.position.z = -DEPTH * (0.1 * Math.abs(Math.sin(PI2 * tick)) + 0.1);

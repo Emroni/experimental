@@ -88,7 +88,6 @@ function ease(t, b = 0, c = 1, d = 1) {
 
 Recorder.init({
     duration: 3,
-    fps: 60,
     target: renderer.domElement,
     render: (tick) => {
         const t = ease((tick + 0.5) % 1);

@@ -96,7 +96,6 @@ for (let x = 0; x < CUBE_ROW; x++) {
 
 Recorder.init({
     duration: 12,
-    fps: 60,
     target: renderer.domElement,
     render: (tick) => {
 

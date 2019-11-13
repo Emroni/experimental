@@ -117,7 +117,6 @@ for (let i = 0; i < SHAPES; i++) {
 
 Recorder.init({
     duration: 20,
-    fps: 60,
     target: renderer.domElement,
     render: (tick) => {
         light.position.z = 100 * Math.sin(PI2 * 4 * tick) + 100;

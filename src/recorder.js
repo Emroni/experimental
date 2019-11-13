@@ -12,9 +12,9 @@ export const controls = {
 export let target;
 
 let frameRequest;
-let render;
-let recording;
 let recordButton;
+let recording;
+let render;
 let saveButton;
 let saving;
 let time;
@@ -28,17 +28,94 @@ export function init(options) {
     controls.size = target.height;
 
     const recorderFolder = gui.addFolder('Recorder');
+    recorderFolder.open();
+
     recorderFolder.add(controls, 'duration', 1, 60, 1);
     recorderFolder.add(controls, 'size', 0, 1200, 20);
     recorderFolder.add(controls, 'skip', 0, 60, 0.01);
     recorderFolder.add(controls, 'play');
     recordButton = recorderFolder.add(controls, 'record');
     saveButton = recorderFolder.add(controls, 'save');
+    
+    if (options.change !== undefined) {
+        recorderFolder.__controllers.forEach(controller => {
+            controller.onChange(val => {
+                options.change(controller.property, val);
+            })
+        });
+    }
+
+    if (options.controls) {
+        controls.custom = options.controls;
+
+        const customFolder = gui.addFolder('Controls');
+        customFolder.open();
+
+        Object.entries(options.controls)
+            .forEach(([key, value]) => {
+
+                if (value instanceof Object && !value.hasOwnProperty('value')) {
+                    const folder = customFolder.addFolder(key);
+                    folder.open();
+
+                    const change = options.change === undefined ? undefined : () => {
+                        options.change(key, controls.custom[key]);
+                    };
+
+                    if (Array.isArray(value)) {
+                        value.forEach((val, index) => {
+                            addControl(controls.custom[key], folder, index, val, change);
+                        });
+
+                    } else {
+                        Object.entries(value)
+                            .forEach(([child, val]) => {
+                                addControl(controls.custom[key], folder, child, val, change);
+                            });
+                    }
+
+                } else {
+                    addControl(controls.custom, customFolder, key, value, options.change);
+                }
+            });
+
+        if (options.change !== undefined) {
+            options.change();
+        }
+    }
 
     window.addEventListener('resize', resize);
     resize();
 
     play();
+}
+
+function addControl(object, folder, key, value, change) {
+    let control;
+
+    if (typeof value === 'string' && value.substr(0, 1) === '#') {
+        control = folder.addColor(object, key);
+
+    } else {
+        let min = 0;
+        let max = (value * 10) || 100;
+        let step = (value / 100) || 1;
+
+        if (value instanceof Object) {
+            min = value.min || min;
+            max = value.max || max;
+            step = value.step || step;
+            object[key] = value.value;
+        }
+
+        control = folder.add(object, key, min, max, step);
+    }
+
+    if (change !== undefined) {
+        control.onChange(val => {
+            change(key, val);
+        });
+    }
 }
 
 function resize() {

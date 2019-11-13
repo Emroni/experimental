@@ -100,7 +100,6 @@ const ray = new THREE.Vector3(0, 1, 0);
 Recorder.init({
     delay: 1,
     duration: 20,
-    fps: 60,
     target: renderer.domElement,
     render: (tick) => {
         lightIn.intensity = 4 * Math.sin(PI2 * 2 * tick) + 4;
