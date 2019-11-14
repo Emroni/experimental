@@ -38,7 +38,7 @@ app.post('/save', (req, res) => {
 
     const file = `/export/${name}.mp4`;
     const scale = size !== 1200 ? `-filter:v scale=-1:${size}` : '';
-    const command = `ffmpeg -framerate 60 -i public/export/temp/%04d.png -pix_fmt yuv420p -c:v libx264 -crf 1 -framerate 60 ${scale} -v verbose -y public${file}`;
+    const command = `ffmpeg -framerate 60 -i public/export/temp/%04d.png -pix_fmt yuv420p -c:v libx264 -crf 1 -framerate 60 ${scale} -y public${file}`;
 
     exec(command, () => {
         res.send({
