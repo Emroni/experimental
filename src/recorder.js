@@ -180,6 +180,10 @@ function snap() {
             const t = (recording.increment * (recording.index + recording.skip)) % 1;
             render(t);
 
+            if (progress) {
+                progress.style.width = (100 * (recording.index / recording.frames)) + '%';
+            }
+
             if (recording.index < 0) {
                 requestAnimationFrame(snap);
 
