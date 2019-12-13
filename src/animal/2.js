@@ -31,24 +31,9 @@ const controls = {
         },
     },
     bloom: {
-        strength: {
-            min: 0,
-            max: 1,
-            step: 0.01,
-            value: 1,
-        },
-        radius: {
-            min: 0,
-            max: 1,
-            step: 0.01,
-            value: 1,
-        },
-        threshold: {
-            min: 0,
-            max: 1,
-            step: 0.01,
-            value: 0.3,
-        },
+        strength: 1,
+        radius: 1,
+        threshold: 0.3,
     },
 };
 

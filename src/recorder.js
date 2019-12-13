@@ -53,6 +53,29 @@ export function init(options) {
         const customFolder = gui.addFolder('Controls');
         customFolder.open();
 
+        if (options.controls.bloom) {
+            options.controls.bloom = {
+                strength: {
+                    min: 0,
+                    max: 1,
+                    step: 0.01,
+                    value: !isNaN(options.controls.bloom.strength) ? options.controls.bloom.strength : 0.5,
+                },
+                radius: {
+                    min: 0,
+                    max: 1,
+                    step: 0.01,
+                    value: !isNaN(options.controls.bloom.radius) ? options.controls.bloom.radius : 0.5,
+                },
+                threshold: {
+                    min: 0,
+                    max: 1,
+                    step: 0.01,
+                    value: !isNaN(options.controls.bloom.threshold) ? options.controls.bloom.threshold : 0.5,
+                },
+            };
+        }
+
         Object.entries(options.controls)
             .forEach(([key, value]) => {
 
@@ -100,7 +123,7 @@ function addControl(object, folder, key, value, change) {
 
     } else {
         let min = 0;
-        let max = (value * 10) || 100;
+        let max = (value * 2) || 100;
         let step = (value / 100) || 1;
 
         if (value instanceof Object) {
