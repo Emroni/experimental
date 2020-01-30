@@ -41,6 +41,18 @@ module.exports = () => {
             filename: '[name].js',
             path: Path.resolve(__dirname, 'public/build') + '/',
         },
+        module: {
+            rules: [
+                {
+                    test: /\.(glsl|vs|fs|vert|frag)$/,
+                    exclude: /node_modules/,
+                    use: [
+                        'raw-loader',
+                        'glslify-loader',
+                    ],
+                },
+            ],
+        },
         plugins: [
             new Webpack.DefinePlugin({
                 PROJECT: `'${latest.name}'`,
