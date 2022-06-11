@@ -1,11 +1,26 @@
 <!doctype html>
 <html lang="en">
+
     <head>
-        <meta charset="utf-8"/>
+        <meta charset="utf-8" />
         <title>Experimental</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
     </head>
-    <body>
-        Experimental
+
+    <body class="bg-slate-50 flex h-screen">
+        <aside class="bg-slate-900 flex flex-col h-screen text-white" id="sidebar">
+            <div class="bg-slate-800 flex items-center justify-between">
+                <h1 class=" font-bold p-4 pr-12">Experimental</h1>
+            </div>
+            <ol class="flex-1 overflow-y-auto" id="sidebar-list">
+                <li id="sidebar-item-template">
+                    <a class="block italic px-4 py-1 text-left w-full"></a>
+                </li>
+            </ol>
+        </aside>
+        <main class="bg-zinc-900 flex flex-col h-screen flex-1 overflow-hidden text-white">
+            <div class="flex flex-1 items-center justify-center overflow-hidden relative" id="player"></div>
+        </main>
     </body>
+
 </html>
