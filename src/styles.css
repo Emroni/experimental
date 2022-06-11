@@ -1,5 +1,11 @@
 body {
     background-color: #111;
+    margin: 0;
+}
+
+/*
+body {
+    background-color: #111;
     color: #666;
     font-family: Helvetica, Arial, sans-serif;
     font-size: 0.75em;
@@ -56,3 +62,4 @@ body > canvas {
     bottom: 0;
     height: 1px;
 }
+*/

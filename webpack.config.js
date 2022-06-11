@@ -1,6 +1,6 @@
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -20,11 +20,18 @@ module.exports = {
         ],
     },
     resolve: {
+        alias: {
+            '@/components': path.resolve(__dirname, 'src/components/'),
+            '@/constants': path.resolve(__dirname, 'src/constants/'),
+            '@/experiments': path.resolve(__dirname, 'src/experiments/'),
+            '@/helpers': path.resolve(__dirname, 'src/helpers/'),
+        },
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-        filename: 'bundle.[hash].js',
+        filename: '[name].[hash].js',
         path: path.resolve(__dirname, 'dist'),
+        publicPath: '/',
     },
     devServer: {
         client: {
