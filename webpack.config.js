@@ -1,64 +1,46 @@
-const fs = require('fs-extra');
-const LiveReloadPlugin = require('webpack-livereload-plugin');
-const Path = require('path');
-const Webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('path');
 
-module.exports = () => {
-
-    let latest = {
-        time: 0,
-    };
-
-    fs.readdirSync('src')
-        .filter(name => name.substr(-3, 3) !== '.js' && name !== '.DS_Store')
-        .forEach(project => {
-            fs.readdirSync(`src/${project}`)
-                .filter(name => !isNaN(name.replace('.js', '')))
-                .forEach(iteration => {
-                    const path = `./src/${project}/${iteration}`;
-                    const stats = fs.statSync(path);
-
-                    if (latest.time < stats.mtimeMs) {
-                        iteration = iteration.replace('.js', '');
-                        latest = {
-                            iteration,
-                            name: `${project}-${iteration}`,
-                            path,
-                            project,
-                            time: stats.mtimeMs,
-                        };
-                    }
-                });
-        });
-
-    return {
-        mode: 'development',
-        name: latest.project,
-        entry: {
-            [latest.name]: latest.path,
-        },
-        output: {
-            filename: '[name].js',
-            path: Path.resolve(__dirname, 'public/build') + '/',
-        },
-        module: {
-            rules: [
-                {
-                    test: /\.(glsl|vs|fs|vert|frag)$/,
-                    exclude: /node_modules/,
-                    use: [
-                        'raw-loader',
-                        'glslify-loader',
-                    ],
-                },
-            ],
-        },
-        plugins: [
-            new Webpack.DefinePlugin({
-                PROJECT: `'${latest.name}'`,
-            }),
-            new LiveReloadPlugin(),
+module.exports = {
+    entry: './src/index.ts',
+    devtool: 'inline-source-map',
+    module: {
+        rules: [
+            {
+                test: /\.css$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
         ],
-    }
-
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
+    },
+    output: {
+        filename: 'bundle.[hash].js',
+        path: path.resolve(__dirname, 'dist'),
+    },
+    devServer: {
+        client: {
+            logging: 'none',
+        },
+        historyApiFallback: true,
+        hot: true,
+        open: true,
+    },
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            template: 'public/index.html',
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name].[hash].css',
+        }),
+    ],
 };
