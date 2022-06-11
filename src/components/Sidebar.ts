@@ -13,6 +13,8 @@ window.addEventListener('load', () => {
 
     // Generate items
     items = Object.keys(experiments).map(name => {
+        const url = `/${name}`;
+
         // Clone element
         const element = itemTemplate.cloneNode(true) as HTMLLIElement;
         list.appendChild(element);
@@ -20,16 +22,23 @@ window.addEventListener('load', () => {
         // Update anchor
         const anchor = element.querySelector('a');
         anchor.innerHTML = name.replace('/', ' / ');
-        anchor.setAttribute('href', `/${name}`);
+        anchor.setAttribute('href', url);
+        anchor.addEventListener('click', e => {
+            e.preventDefault();
+            window.history.pushState({}, '', url);
+            const popStateEvent = new PopStateEvent('popstate', { state: {} });
+            window.dispatchEvent(popStateEvent);
+        });
 
         // Return item
         return {
             anchor,
             element,
-            url: `/${name}`,
+            url,
         };
     });
 
+    window.addEventListener('popstate', updateItems);
     updateItems();
 });
 
