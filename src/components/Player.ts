@@ -10,12 +10,15 @@ window.addEventListener('load', () => {
     container = document.getElementById('player');
 
     // Add listeners
-    window.addEventListener('popstate', changeExperiment);
-    changeExperiment();
+    window.addEventListener('popstate', handleChange);
+    window.addEventListener('resize', handleResize);
+    handleChange();
 });
 
-function changeExperiment() {
+function handleChange() {
+    // Reset state
     cancelAnimationFrame(frameRequest);
+    container.innerHTML = '';
 
     // Get experiment loader
     const path = window.location.pathname.replace('/', '');
@@ -24,25 +27,30 @@ function changeExperiment() {
     if (loader) {
         // Load experiment
         loader().then(mod => {
-            init(mod.default);
+            // Merge options
+            experiment = {
+                duration: 10,
+                ...mod.default,
+            };
+
+            // Add to container
+            container.appendChild(experiment.element);
+            handleResize();
+
+            // Start ticking
+            startTime = performance.now();
+            tick();
         });
     }
 }
 
-function init(exp: Experiment) {
-    // Merge options
-    experiment = {
-        duration: 10,
-        ...exp,
-    };
+function handleResize() {
+    // Get scale
+    const rect = container.getBoundingClientRect();
+    const scale = Math.min(experiment.size, rect.width, rect.height) / experiment.size;
 
-    // Add to container
-    container.innerHTML = '';
-    container.appendChild(experiment.element);
-
-    // Start ticking
-    startTime = performance.now();
-    tick();
+    // Scale experiment element down if needed
+    experiment.element.style.transform = scale < 1 ? `scale(${scale})` : '';
 }
 
 function tick() {
