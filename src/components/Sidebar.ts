@@ -3,7 +3,7 @@ import experiments from '@/experiments';
 let items: SidebarItem[];
 
 window.addEventListener('load', () => {
-    // Get elements 
+    // Get elements
     const list = document.getElementById('sidebar-list');
     const itemTemplate = document.getElementById('sidebar-item-template');
 
@@ -12,7 +12,8 @@ window.addEventListener('load', () => {
     itemTemplate.removeAttribute('id');
 
     // Generate items
-    items = Object.keys(experiments).map(name => {
+    const names = Object.keys(experiments);
+    items = names.map((name, index) => {
         const url = `/${name}`;
 
         // Clone element
@@ -21,7 +22,6 @@ window.addEventListener('load', () => {
 
         // Update anchor
         const anchor = element.querySelector('a');
-        anchor.innerHTML = name.replace('/', ' / ');
         anchor.setAttribute('href', url);
         anchor.addEventListener('click', e => {
             e.preventDefault();
@@ -29,6 +29,10 @@ window.addEventListener('load', () => {
             const popStateEvent = new PopStateEvent('popstate', { state: {} });
             window.dispatchEvent(popStateEvent);
         });
+
+        const content = anchor.querySelectorAll('span');
+        content[0].innerHTML = (names.length - index).toString().padStart(3, '0');
+        content[1].innerHTML = name.replace('/', ' / ');
 
         // Return item
         return {
