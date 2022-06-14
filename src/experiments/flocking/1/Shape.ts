@@ -1,31 +1,12 @@
+import { PI2 } from '@/constants';
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
+import { RADIUS } from '.';
 
-export const PI2 = Math.PI * 2;
-export const SIZE = 640;
-export const RADIUS = 200;
-export const SPREAD = 30;
-export const SHAPE_SIZE = 10;
-export const ROWS = 300;
-export const ROW_SHAPES = 1;
-export const LENGTH = 0.1;
-
-const scene = new THREE.Scene();
-scene.rotation.x = Math.PI / 2;
-
-const camera = new THREE.PerspectiveCamera(75, 1, 1, 2000);
-camera.position.z = SIZE / (Math.tan(camera.fov * (Math.PI / 180) / 2) * 2);
-
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(SIZE, SIZE);
-
-const light1 = new THREE.PointLight('#e91e63', 2, RADIUS * 5, 1);
-scene.add(light1);
-light1.position.set(RADIUS, RADIUS, RADIUS);
-
-const light2 = new THREE.PointLight('#009688', 2, RADIUS * 5, 1);
-scene.add(light2);
-light2.position.set(-RADIUS, -RADIUS, -RADIUS);
+const SPREAD = 30;
+const SHAPE_SIZE = 10;
+const ROW_SHAPES = 1;
+const LENGTH = 0.1;
 
 const geometry = new THREE.ConeGeometry(SHAPE_SIZE / 2, SHAPE_SIZE, 3, 1);
 
@@ -37,18 +18,19 @@ const shape = new THREE.Mesh(geometry, material);
 
 const simplex = new SimplexNoise();
 
-const shapes = [];
 
-class Shape extends THREE.Object3D {
+export default class Shape extends THREE.Object3D {
 
     index: number;
     multiplier: THREE.Vector2;
     meshes: THREE.Mesh[];
+    scene: THREE.Scene;
     
-    constructor(row) {
+    constructor(scene, shapes, row) {
         super();
 
         this.index = row * LENGTH;
+        this.scene = scene;
 
         this.multiplier = new THREE.Vector2(2, 3 + Math.random());
 
@@ -70,7 +52,7 @@ class Shape extends THREE.Object3D {
         this.position.x = Math.sin(tX) * Math.cos(tY) * RADIUS;
         this.position.y = Math.sin(tX) * Math.sin(tY) * RADIUS;
         this.position.z = Math.cos(tX) * RADIUS;
-        this.lookAt(scene.position);
+        this.lookAt(this.scene.position);
 
         const n = PI2 * (this.index + tick);
         const noiseX = Math.cos(n);
@@ -84,24 +66,4 @@ class Shape extends THREE.Object3D {
         }
     }
 
-}
-
-for (let i = 0; i < ROWS; i++) {
-    new Shape(i / ROWS);
-}
-
-export default {
-    duration: 10,
-    element: renderer.domElement,
-    size: SIZE,
-    onTick: (tick) => {
-
-        // scene.rotation.y = 0.1 * Math.sin(PI2 * tick);
-
-        for (let i = 0; i < shapes.length; i++) {
-            shapes[i].move(tick);
-        }
-
-        renderer.render(scene, camera);
-    },
 }

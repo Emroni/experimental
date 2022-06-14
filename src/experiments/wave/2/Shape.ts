@@ -1,15 +1,10 @@
+import { PI2 } from '@/constants';
 import { Linear, TimelineLite } from 'gsap';
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
+import { SHAPES } from '.';
 
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-
-const PI2 = Math.PI * 2;
 const PI_HALF = Math.PI / 2;
-const SIZE = 640;
-const SHAPES = 3000;
 const COLORS = [
     '#f44336',
     '#e91e63',
@@ -22,34 +17,12 @@ const COLORS = [
     '#8bc34a',
 ];
 
-const scene = new THREE.Scene();
-scene.position.y = 200;
-
-const camera = new THREE.PerspectiveCamera(75, 1, 1, 2000);
-camera.position.z = 1000;
-
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(SIZE, SIZE);
-renderer.toneMappingExposure = 1.5;
-
-const renderScene = new RenderPass(scene, camera);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(SIZE, SIZE), 0.8, 0, 0);
-
-const composer = new EffectComposer(renderer);
-composer.addPass(renderScene);
-composer.addPass(bloomPass);
-
-const light = new THREE.PointLight(0xFFFFFF, 5, 2000, 5);
-scene.add(light);
-
-const container = new THREE.Object3D();
-scene.add(container);
-
 const geometry = new THREE.BoxGeometry(30, 30, 30);
 
 const simplex = new SimplexNoise();
 
-class Shape extends THREE.Object3D {
+
+export default class Shape extends THREE.Object3D {
 
     index: number;
     offset: number;
@@ -117,25 +90,4 @@ class Shape extends THREE.Object3D {
         this.rotation.x = PI2 * (this.speed * tick) + this.rotationOffset;
     }
 
-}
-
-for (let i = 0; i < SHAPES; i++) {
-    const shape = new Shape(i);
-    container.add(shape);
-}
-
-export default {
-    duration: 20,
-    element: renderer.domElement,
-    size: SIZE,
-    onTick: (tick) => {
-        light.position.z = 100 * Math.sin(PI2 * 4 * tick) + 100;
-
-        container.rotation.x = 0.1 * Math.sin(PI2 * 2 * tick) - 1;
-        container.rotation.z = -PI2 * tick;
-
-        container.children.forEach((child: Shape) => child.move(tick));
-
-        composer.render();
-    },
 }
