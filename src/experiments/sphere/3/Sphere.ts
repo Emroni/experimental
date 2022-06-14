@@ -1,4 +1,4 @@
-import { PI2 } from '@/constants';
+import { PI, PI2, PI_HALF } from '@/constants';
 import * as THREE from 'three';
 import fragmentShader from './shader.frag';
 import vertexShader from './shader.vert';
@@ -66,7 +66,7 @@ export default class Sphere extends THREE.Object3D {
 
             const n = (i * f) - 1 + (f / 2);
             const r = Math.sqrt(1 - (n * n)) * radius;
-            const alpha = (i % shapes) * Math.PI * (3 - Math.sqrt(5));
+            const alpha = (i % shapes) * PI * (3 - Math.sqrt(5));
 
             shape.position.x = Math.cos(alpha) * r;
             shape.position.y = -n * radius;
@@ -75,8 +75,8 @@ export default class Sphere extends THREE.Object3D {
 
             shape.userData.hexagon = hexagon.clone();
             shape.add(shape.userData.hexagon);
-            shape.userData.hexagon.rotation.y = PI2 / 16;
-            shape.userData.hexagon.rotation.x = Math.PI / 2;
+            shape.userData.hexagon.rotation.y = PI_HALF / 4;
+            shape.userData.hexagon.rotation.x = PI_HALF;
         }
     }
 

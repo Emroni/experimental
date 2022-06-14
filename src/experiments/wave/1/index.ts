@@ -1,4 +1,4 @@
-import { PI2 } from '@/constants';
+import { PI, PI2 } from '@/constants';
 import * as THREE from 'three';
 import Shape from './Shape';
 
@@ -8,7 +8,7 @@ export const SHAPE_ROW = 50;
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, 1, 1, 1000);
-camera.position.z = SIZE / (Math.tan(camera.fov * (Math.PI / 180) / 2) * 2);
+camera.position.z = SIZE / (Math.tan(camera.fov * (PI / 180) / 2) * 2);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(SIZE, SIZE);
@@ -20,8 +20,8 @@ light.position.z = camera.position.z;
 const container = new THREE.Object3D();
 scene.add(container);
 container.position.z = 100;
-container.rotation.x = -Math.PI / 6;
-container.rotation.z = Math.PI / 4;
+container.rotation.x = -PI / 6;
+container.rotation.z = PI / 4;
 
 const shapes = [];
 

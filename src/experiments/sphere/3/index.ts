@@ -1,3 +1,4 @@
+import { PI2 } from '@/constants';
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -9,7 +10,6 @@ import Sphere from './Sphere';
 // TODO: Add progress
 
 const SIZE = 1200;
-const PI2 = 2 * Math.PI;
 
 const controls = {
     bloom: {

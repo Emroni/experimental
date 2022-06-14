@@ -1,5 +1,6 @@
+import { PI2 } from '@/constants';
 import * as THREE from 'three';
-import Base, { COLORS, PI2, Shape } from './base';
+import Base, { COLORS, Shape } from './base';
 
 for (let i = 0; i < COLORS.length; i++) {
     let size = i % 2 ? 20 : 30;

@@ -1,4 +1,4 @@
-import { PI2, PI_HALF } from '@/constants';
+import { PI, PI2, PI_HALF } from '@/constants';
 import * as THREE from 'three';
 import { SIZE } from '.';
 
@@ -21,7 +21,7 @@ export default class LidShape extends THREE.Object3D {
         this.previousPosition = new THREE.Vector3();
 
         this.position.set(20 * Math.random() - 10, 20 * Math.random() - 10, 0);
-        this.rotation.z = Math.PI * Math.round(Math.random());
+        this.rotation.z = PI * Math.round(Math.random());
 
         this.mesh = new THREE.Mesh(lidsGeometry, lidsMaterial);
         this.add(this.mesh);
@@ -32,7 +32,7 @@ export default class LidShape extends THREE.Object3D {
         const t = tick + this.offset;
         this.previousPosition.copy(this.mesh.position);
 
-        this.mesh.position.x = 100 * Math.tan(Math.PI * t);
+        this.mesh.position.x = 100 * Math.tan(PI * t);
         this.mesh.position.y = 30 * Math.cos(PI2 * t) + 20;
         this.mesh.scale.setScalar(Math.max(0.0001, 1 - Math.abs(this.mesh.position.x * 2) / SIZE));
 

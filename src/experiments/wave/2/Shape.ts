@@ -1,10 +1,9 @@
-import { PI2 } from '@/constants';
+import { PI2, PI_HALF } from '@/constants';
 import { Linear, TimelineLite } from 'gsap';
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
 import { SHAPES } from '.';
 
-const PI_HALF = Math.PI / 2;
 const COLORS = [
     '#f44336',
     '#e91e63',

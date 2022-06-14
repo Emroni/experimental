@@ -1,10 +1,10 @@
+import { PI2 } from '@/constants';
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
 
 const FRAME = 640;
 const PARTICLES = 10000;
 const SIZE = 2;
-const PI2 = Math.PI * 2;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);

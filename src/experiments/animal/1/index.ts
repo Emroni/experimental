@@ -1,4 +1,4 @@
-import { PI2 } from '@/constants';
+import { PI2, PI_HALF } from '@/constants';
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -64,20 +64,20 @@ const paths = [
     new Path(container, bumpMap, {
         count: 1,
         offset: 1,
-        geometryMatrix: new THREE.Matrix4().makeRotationX(Math.PI / 2),
+        geometryMatrix: new THREE.Matrix4().makeRotationX(PI_HALF),
         geometry: new THREE.CylinderGeometry(20, 60, 120, 8),
         color: '#f00',
     }),
     new Path(container, bumpMap, {
         count: 150,
         offset: -0.5,
-        geometryMatrix: new THREE.Matrix4().makeRotationX(Math.PI / 2),
+        geometryMatrix: new THREE.Matrix4().makeRotationX(PI_HALF),
         geometry: new THREE.CylinderGeometry(40, 40, 80, 8),
         color: '#f00',
     }),
     new Path(container, bumpMap, {
         count: 150,
-        geometryMatrix: new THREE.Matrix4().makeRotationX(Math.PI / 2),
+        geometryMatrix: new THREE.Matrix4().makeRotationX(PI_HALF),
         geometry: new THREE.CylinderGeometry(40, 40, 20, 8),
         color: '#ddd',
     }),

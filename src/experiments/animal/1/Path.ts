@@ -1,4 +1,4 @@
-import { PI2 } from '@/constants';
+import { PI, PI2 } from '@/constants';
 import * as THREE from 'three';
 
 export default class Path {
@@ -53,7 +53,7 @@ export default class Path {
     step(index, tick, vector) {
         const n = (index + this.options.offset) / this.segments.length;
         const radius = 50 * Math.sin(PI2 * 3 * tick) + 300 * Math.pow(n, 4) + 300;
-        const t = Math.PI * (tick + n);
+        const t = PI * (tick + n);
         const tX = 8 * t;
         const tY = 6 * t;
 

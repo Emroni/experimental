@@ -1,3 +1,4 @@
+import { PI, PI_HALF } from '@/constants';
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -5,7 +6,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import Path from './Path';
 
 const SIZE = 1200;
-const PI2 = 2 * Math.PI;
+const PI2 = 2 * PI;
 
 const scene = new THREE.Scene();
 
@@ -48,8 +49,8 @@ const triangleMaterial = new THREE.MeshPhysicalMaterial({
 const triangle = new THREE.Mesh(triangleGeometry, triangleMaterial);
 container.add(triangle);
 triangle.position.z = -2500;
-triangle.rotation.x = Math.PI / 2;
-triangle.rotation.y = Math.PI;
+triangle.rotation.x = PI_HALF;
+triangle.rotation.y = PI;
 
 export default {
     duration: 10,

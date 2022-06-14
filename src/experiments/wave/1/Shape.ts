@@ -1,4 +1,4 @@
-import { PI2 } from '@/constants';
+import { PI, PI2 } from '@/constants';
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
 import { SHAPE_ROW } from '.';
@@ -47,7 +47,7 @@ export default class Shape extends THREE.Object3D {
 
         if (this.mirror) {
             this.position.x += SHAPE_SIZE / 2;
-            this.rotation.z = Math.PI;
+            this.rotation.z = PI;
         }
 
         this.mesh = (this.mirror ? mesh2 : mesh1).clone();
@@ -58,7 +58,7 @@ export default class Shape extends THREE.Object3D {
         const noiseAlpha = PI2 * (this.x + tick);
         const noiseX = Math.cos(noiseAlpha);
         const noiseY = Math.sin(noiseAlpha);
-        this.rotation.y = Math.PI * simplex.noise3D(noiseX + this.index.x, noiseY, this.index.y);
+        this.rotation.y = PI * simplex.noise3D(noiseX + this.index.x, noiseY, this.index.y);
     }
 
 }

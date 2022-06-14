@@ -1,3 +1,4 @@
+import { PI, PI_HALF } from '@/constants';
 import * as THREE from 'three';
 import Shape from './Shape';
 
@@ -6,10 +7,10 @@ export const RADIUS = 200;
 export const ROWS = 300;
 
 const scene = new THREE.Scene();
-scene.rotation.x = Math.PI / 2;
+scene.rotation.x = PI_HALF;
 
 const camera = new THREE.PerspectiveCamera(75, 1, 1, 2000);
-camera.position.z = SIZE / (Math.tan(camera.fov * (Math.PI / 180) / 2) * 2);
+camera.position.z = SIZE / (Math.tan(camera.fov * (PI / 180) / 2) * 2);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(SIZE, SIZE);

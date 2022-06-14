@@ -1,8 +1,8 @@
+import { PI2 } from '@/constants';
 import * as THREE from 'three';
 
 export { default as Shape } from './Shape';
 
-export const PI2 = Math.PI * 2;
 export const DEPTH = 1000;
 export const SIZE = 640;
 export const RADIUS = SIZE / 2;

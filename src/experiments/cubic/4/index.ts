@@ -1,3 +1,4 @@
+import { PI } from '@/constants';
 import * as THREE from 'three';
 import Shape, { CUBE_ROWS } from './Shape';
 
@@ -27,7 +28,7 @@ for (let x = 0; x < CUBE_ROWS; x++) {
 }
 
 function ease(t = 0, b = 0, c = 1, d = 1) {
-    return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+    return -c / 2 * (Math.cos(PI * t / d) - 1) + b;
 }
 
 export default {

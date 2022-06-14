@@ -1,4 +1,4 @@
-import { PI2 } from '@/constants';
+import { PI, PI2 } from '@/constants';
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
 import { grids } from '.';
@@ -67,9 +67,9 @@ export default class Grid extends THREE.Object3D {
             const noiseY = Math.cos(noiseAlpha) + noise * shape.userData.y;
 
             shape.position.z = amplitude * this.simplex.noise3D(noiseX, noiseY, 0);
-            shape.rotation.x = Math.PI * this.simplex.noise3D(noiseX, noiseY, 1);
-            shape.rotation.y = Math.PI * this.simplex.noise3D(noiseX, noiseY, 2);
-            shape.rotation.z = Math.PI * this.simplex.noise3D(noiseX, noiseY, 3);
+            shape.rotation.x = PI * this.simplex.noise3D(noiseX, noiseY, 1);
+            shape.rotation.y = PI * this.simplex.noise3D(noiseX, noiseY, 2);
+            shape.rotation.z = PI * this.simplex.noise3D(noiseX, noiseY, 3);
             shape.scale.setScalar(0.3 * Math.abs(this.simplex.noise3D(noiseX, noiseY, 4)) + 0.7);
 
             shape.updateMatrix();
