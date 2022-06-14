@@ -8,34 +8,30 @@ export const PARTICLE_ROWS = 30;
 export const PARTICLE_SIZE = 30;
 
 const geometry = new THREE.DodecahedronGeometry(PARTICLE_SIZE);
-// geometry.faces.forEach((face, index) => {
-//     face.materialIndex = Math.floor(index / 6);
-// });
+for (let i = 0; i < geometry.attributes.position.array.length; i += 3) {
+    geometry.addGroup(i, 3, Math.floor(i / 3 / 6));
+}
 
-const materials = new THREE.MeshPhongMaterial({
-    color: '#e91e63',
-});
-
-// const materials = [
-//     new THREE.MeshPhongMaterial({
-//         color: '#e91e63',
-//     }),
-//     new THREE.MeshPhongMaterial({
-//         color: '#2196f3',
-//     }),
-//     new THREE.MeshPhongMaterial({
-//         color: '#9c27b0',
-//     }),
-//     new THREE.MeshPhongMaterial({
-//         color: '#009688',
-//     }),
-//     new THREE.MeshPhongMaterial({
-//         color: '#cddc39',
-//     }),
-//     new THREE.MeshPhongMaterial({
-//         color: '#ff9800',
-//     }),
-// ];
+const materials = [
+    new THREE.MeshPhongMaterial({
+        color: '#e91e63',
+    }),
+    new THREE.MeshPhongMaterial({
+        color: '#2196f3',
+    }),
+    new THREE.MeshPhongMaterial({
+        color: '#9c27b0',
+    }),
+    new THREE.MeshPhongMaterial({
+        color: '#009688',
+    }),
+    new THREE.MeshPhongMaterial({
+        color: '#cddc39',
+    }),
+    new THREE.MeshPhongMaterial({
+        color: '#ff9800',
+    }),
+];
 
 const mesh = new THREE.Mesh(geometry, materials);
 
