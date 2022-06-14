@@ -34,7 +34,7 @@ module.exports = {
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-        filename: '[name].[hash].js',
+        filename: '[name].[fullhash].js',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/',
     },
@@ -52,7 +52,7 @@ module.exports = {
             template: 'public/index.html',
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].[hash].css',
+            filename: '[name].[fullhash].css',
         }),
     ],
 };
