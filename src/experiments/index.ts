@@ -1,5 +1,3 @@
-// TODO: Add polyhedron
-
 export default {
     'sphere/3': () => import('./sphere/3'),
     'animal/2': () => import('./animal/2'),
@@ -29,8 +27,8 @@ export default {
     'kaleidoscope/3': () => import('./kaleidoscope/3'),
     'kaleidoscope/2': () => import('./kaleidoscope/2'),
     'kaleidoscope/1': () => import('./kaleidoscope/1'),
-    // 'polyhedron/2': () => import('./polyhedron/2'),
-    // 'polyhedron/1': () => import('./polyhedron/1'),
+    'polyhedron/2': () => import('./polyhedron/2'),
+    'polyhedron/1': () => import('./polyhedron/1'),
     'sphere/2': () => import('./sphere/2'),
     'sphere/1': () => import('./sphere/1'),
     'hexagon/5': () => import('./hexagon/5'),
