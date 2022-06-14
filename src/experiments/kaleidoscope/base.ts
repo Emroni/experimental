@@ -101,6 +101,7 @@ export class Shape extends PIXI.Container {
 export default {
     duration: 10,
     element: app.view,
+    size: SIZE,
     onTick: (tick) => {
         main.children.forEach((child: Shape) => child.move(tick));
     },

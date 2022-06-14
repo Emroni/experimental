@@ -93,6 +93,7 @@ for (let i = 0; i < ROWS; i++) {
 export default {
     duration: 10,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
 
         // scene.rotation.y = 0.1 * Math.sin(PI2 * tick);

@@ -80,6 +80,7 @@ new Path(0.25, 0.5, -0.125);
 export default {
     duration: 5,
     element: app.view,
+    size: SIZE,
     onTick: (tick) => {
         const t = easeInOutCubic(tick * 5 % 1) * 0.2 + (Math.floor(tick / 0.2) * 0.2);
         app.stage.children.forEach((child: Path) => child.move(t));

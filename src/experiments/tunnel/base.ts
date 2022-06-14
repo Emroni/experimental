@@ -72,6 +72,7 @@ export class Shape extends THREE.Object3D {
 export default {
     duration: 10,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
 
         light.position.z = DEPTH * (0.5 * Math.abs(Math.sin(PI2 * tick * 2)) + 0.5);

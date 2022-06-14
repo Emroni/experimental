@@ -59,6 +59,7 @@ function add(row, x, y) {
 export default {
     duration: 5,
     element: app.view,
+    size: SIZE,
     onTick: (tick) => {
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];

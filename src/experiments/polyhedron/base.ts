@@ -92,6 +92,7 @@ export function run(shape: THREE.PolyhedronGeometry, layers: number, spread: num
     return {
         duration: 10,
         element: renderer.domElement,
+        size: SIZE,
         onTick: (tick) => {
             const d = (0.5 * Math.sin(PI2 * tick) + 0.5);
             const p = 1 - 0.75 * d;

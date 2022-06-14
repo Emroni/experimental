@@ -110,6 +110,7 @@ for (let i = 0; i < ROWS; i++) {
 export default {
     duration: 20,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
 
         const t = (tick + 0.5) % 1;

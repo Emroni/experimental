@@ -35,6 +35,16 @@ const mesh2 = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
 
 const shapes = [];
 class Shape extends THREE.Object3D {
+    
+    index: {
+        x: number;
+        y: number;
+    };
+    mesh: THREE.Mesh;
+    mirror: boolean;
+    x: number;
+    y: number;
+
     constructor(x, y, mirror) {
         super();
 
@@ -73,7 +83,7 @@ class Shape extends THREE.Object3D {
 
 for (let x = 0; x < SHAPE_ROW; x++) {
     for (let y = 0; y < SHAPE_ROW; y++) {
-        new Shape(x, y);
+        new Shape(x, y, false);
         new Shape(x, y, true);
     }
 }
@@ -83,6 +93,7 @@ const simplex = new SimplexNoise();
 export default {
     duration: 10,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
 
         scene.rotation.y = 0.1 * Math.sin(PI2 * tick);

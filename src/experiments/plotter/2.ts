@@ -121,6 +121,7 @@ new Path(0.01, -0.005, -180, 60, 0.7);
 export default {
     duration: 10,
     element: app.view,
+    size: SIZE,
     onTick: (tick) => {
         const t = easeInOutCubic(tick * 5 % 1) * 0.2 + (Math.floor(tick / 0.2) * 0.2);
         container.children.forEach((child: Path) => child.move(t));

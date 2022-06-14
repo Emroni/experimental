@@ -36,6 +36,13 @@ const container = new THREE.Object3D();
 scene.add(container);
 
 class Grid extends THREE.Object3D {
+
+    index: number;
+    simplex: SimplexNoise;
+    material: THREE.MeshPhongMaterial;
+    mesh: THREE.InstancedMesh;
+    shapes: THREE.Object3D[];
+
     constructor(index, segments) {
         super();
 
@@ -76,7 +83,7 @@ class Grid extends THREE.Object3D {
         const amplitude = 30 * Math.cos(t) + 70;
 
         this.rotation.x = 0.1 * Math.sin(t);
-        this.rotation.t = 0.1 * Math.cos(t);
+        this.rotation.y = 0.1 * Math.cos(t);
 
         this.material.color.setHSL(offset, 1, 0.5);
 
@@ -111,6 +118,7 @@ const grids = [
 export default {
     duration: 30,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
         container.rotation.z = PI2 * tick;
 

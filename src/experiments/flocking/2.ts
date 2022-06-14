@@ -110,6 +110,7 @@ for (let i = 0; i < ROWS; i++) {
 export default {
     duration: 10,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
 
         for (let i = 0; i < shapes.length; i++) {

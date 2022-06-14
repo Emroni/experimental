@@ -129,6 +129,7 @@ for (let i = 0; i < LAYERS; i++) {
 export default {
     duration: 20,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
         light.position.z = -DEPTH * (0.1 * Math.abs(Math.sin(PI2 * tick)) + 0.1);
 

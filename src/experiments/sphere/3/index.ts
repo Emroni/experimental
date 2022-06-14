@@ -145,6 +145,7 @@ export default {
     duration: 30,
     element: renderer.domElement,
     // progress: true,
+    size: SIZE,
     onTick: (tick) => {
         container.rotation.y = PI2 * tick;
 

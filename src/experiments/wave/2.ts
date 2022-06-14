@@ -1,6 +1,6 @@
+import { Linear, TimelineLite } from 'gsap';
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
-import { TimelineLite, Linear } from 'gsap';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -33,7 +33,7 @@ renderer.setSize(SIZE, SIZE);
 renderer.toneMappingExposure = 1.5;
 
 const renderScene = new RenderPass(scene, camera);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(SIZE, SIZE), 0.8, 0);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(SIZE, SIZE), 0.8, 0, 0);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(renderScene);
@@ -50,6 +50,17 @@ const geometry = new THREE.BoxGeometry(30, 30, 30);
 const simplex = new SimplexNoise();
 
 class Shape extends THREE.Object3D {
+
+    index: number;
+    offset: number;
+    amplitude: number;
+    speed: number;
+    colorOffset: number;
+    rotationOffset: number;
+    material: THREE.MeshPhongMaterial;
+    mesh: THREE.Mesh;
+    color: string;
+    timeline: TimelineLite;
 
     constructor(index) {
         super();
@@ -116,15 +127,14 @@ for (let i = 0; i < SHAPES; i++) {
 export default {
     duration: 20,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
         light.position.z = 100 * Math.sin(PI2 * 4 * tick) + 100;
 
         container.rotation.x = 0.1 * Math.sin(PI2 * 2 * tick) - 1;
         container.rotation.z = -PI2 * tick;
 
-        for (let i = 0; i < container.children.length; i++) {
-            container.children[i].move(tick);
-        }
+        container.children.forEach((child: Shape) => child.move(tick));
 
         composer.render();
     },

@@ -51,6 +51,7 @@ for (let i = 0; i < FACES; i++) {
 export default {
     duration: 10,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
         scene.rotation.y = PI2 * tick;
 

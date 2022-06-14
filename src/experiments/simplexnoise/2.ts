@@ -2,14 +2,15 @@ import * as PIXI from 'pixi.js';
 import SimplexNoise from 'simplex-noise';
 
 const PI2 = 2 * Math.PI;
+const SIZE = 640;
 const ROWS = 3;
 const PARTICLES = 1000;
 const LOOPS = 10;
 
 const app = new PIXI.Application({
     antialias: true,
-    width: 640,
-    height: 640,
+    width: SIZE,
+    height: SIZE,
 });
 
 const center = {
@@ -41,6 +42,7 @@ for (let i = 0; i < ROWS; i++) {
 export default {
     duration: 10,
     element: app.view,
+    size: SIZE,
     onTick: (tick) => {
         for (let i = 0; i < ROWS; i++) {
             const simplex = simplexes[i];
