@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js';
 import SimplexNoise from 'simplex-noise';
 import { ROWS, SIZE } from '.';
 
+PIXI.utils.skipHello();
+
 const CELL = 10;
 const SEGMENT = 30;
 

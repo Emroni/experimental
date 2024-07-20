@@ -2,6 +2,8 @@ import { PI2 } from '@/constants';
 import * as PIXI from 'pixi.js';
 import Base, { COLORS, mirror, RADIUS, Shape, WEDGES } from './base';
 
+PIXI.utils.skipHello();
+
 
 const filter = new PIXI.filters.ColorMatrixFilter();
 filter.lsd(false);
