@@ -3,6 +3,8 @@ import * as PIXI from 'pixi.js';
 import { ROWS, SIZE } from '.';
 import Line from './Line';
 
+PIXI.utils.skipHello();
+
 export default class Path extends PIXI.Container {
 
     constructor(app, offsetX, offsetY, rotation) {

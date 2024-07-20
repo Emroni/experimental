@@ -3,6 +3,8 @@ import * as Filters from 'pixi-filters';
 import * as PIXI from 'pixi.js';
 import Path from './Path';
 
+PIXI.utils.skipHello();
+
 export const ROWS = 20;
 export const SIZE = 1280;
 

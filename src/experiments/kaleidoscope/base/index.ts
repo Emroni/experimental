@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js';
 import Container from './Container';
 import Shape from './Shape';
 
+PIXI.utils.skipHello();
+
 export { default as Shape } from './Shape';
 
 export const SIZE = 640;

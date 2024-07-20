@@ -2,6 +2,8 @@ import { PI2 } from '@/constants';
 import * as PIXI from 'pixi.js';
 import SimplexNoise from 'simplex-noise';
 
+PIXI.utils.skipHello();
+
 const SIZE = 640;
 const simplex = new SimplexNoise();
 const app = new PIXI.Application({

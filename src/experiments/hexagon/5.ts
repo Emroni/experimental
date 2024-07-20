@@ -1,6 +1,8 @@
 import { PI2 } from '@/constants';
 import * as PIXI from 'pixi.js';
 
+PIXI.utils.skipHello();
+
 const SIZE = 25;
 const SPACING = 2;
 const ROWS = 20;

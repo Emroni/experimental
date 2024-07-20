@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js';
 import { app, main, mirror } from '.';
 
+PIXI.utils.skipHello();
+
 export default class Shape extends PIXI.Container {
 
     spriteMain: PIXI.Sprite

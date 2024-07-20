@@ -2,6 +2,8 @@ import { PI2 } from '@/constants';
 import * as PIXI from 'pixi.js';
 import { RADIUS, SIZE_HALF, WEDGES } from '.';
 
+PIXI.utils.skipHello();
+
 export default class Container extends PIXI.Container {
 
     constructor(mirrored = false) {
