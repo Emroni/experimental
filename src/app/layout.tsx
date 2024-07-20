@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@/contexts/Theme/Theme';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
     return <html lang="en">
         <body>
-            {children}
+            <ThemeProvider>
+                {children}
+            </ThemeProvider>
         </body>
     </html>;
 
