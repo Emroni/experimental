@@ -1,4 +1,6 @@
+import { Sidebar } from '@/components';
 import { ThemeProvider } from '@/contexts/Theme/Theme';
+import { Box } from '@mui/material';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -23,11 +25,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 
     return <html lang="en">
-        <body>
-            <ThemeProvider>
-                {children}
-            </ThemeProvider>
-        </body>
+        <ThemeProvider>
+            <Box component="body" display="flex" height="100vh">
+                <Sidebar />
+                <Box component="main" flex={1}>
+                    {children}
+                </Box>
+            </Box>
+        </ThemeProvider>
     </html>;
 
 }
