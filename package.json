@@ -25,6 +25,7 @@
         "webpack-dev-server": "^4.9.2"
     },
     "dependencies": {
+        "dotenv-flow-webpack": "^2.0.0",
         "gsap": "^3.10.4",
         "pixi-filters": "^4.1.6",
         "pixi.js": "^6.4.2",

@@ -1,6 +1,6 @@
+import { PI2 } from '@/constants';
 import * as PIXI from 'pixi.js';
 
-const PI2 = Math.PI * 2;
 const SIZE = 30;
 const BORDER = 1;
 const SPACING = 5;
@@ -72,6 +72,7 @@ function add(row, x, y) {
 export default {
     duration: 5,
     element: app.view,
+    size: SIZE,
     onTick: (tick) => {
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];

@@ -1,4 +1,4 @@
-import { PI2 } from '@/constants';
+import { PI2, PI_HALF } from '@/constants';
 import * as THREE from 'three';
 import Shape, { CUBE, ROWS } from './Shape';
 
@@ -50,7 +50,7 @@ const bgBottom = bgBack.clone();
 container.add(bgBottom);
 bgBottom.position.y = -WIDTH / 2 - CUBE /2;
 bgBottom.position.z = WIDTH / 2;
-bgBottom.rotation.x = -Math.PI / 2;
+bgBottom.rotation.x = -PI_HALF;
 
 const shapes: Shape[] = [];
 for (let i = 0; i < COUNT; i++) {

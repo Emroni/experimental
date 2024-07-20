@@ -1,3 +1,4 @@
+import { PI, PI2 } from '@/constants';
 import { Linear, TimelineLite } from 'gsap';
 import SimplexNoise from 'simplex-noise';
 import * as THREE from 'three';
@@ -5,7 +6,6 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-const PI2 = Math.PI * 2;
 const SIZE = 640;
 const CUBE = 50;
 const LAYERS = 20;
@@ -115,7 +115,7 @@ class Layer extends THREE.Object3D {
             const r = child.userData.radius * (1 - Math.sin(noise));
             child.position.x = r * Math.sin(n);
             child.position.y = r * Math.cos(n);
-            child.rotation.z = Math.atan2(child.position.y, child.position.x) + (PI2 * 3 * tick) + (Math.PI / 4);
+            child.rotation.z = Math.atan2(child.position.y, child.position.x) + (PI2 * 3 * tick) + (PI / 4);
         }
     }
 
@@ -129,6 +129,7 @@ for (let i = 0; i < LAYERS; i++) {
 export default {
     duration: 20,
     element: renderer.domElement,
+    size: SIZE,
     onTick: (tick) => {
         light.position.z = -DEPTH * (0.1 * Math.abs(Math.sin(PI2 * tick)) + 0.1);
 

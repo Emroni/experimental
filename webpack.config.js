@@ -1,4 +1,5 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const DotenvFlow = require('dotenv-flow-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
@@ -34,7 +35,7 @@ module.exports = {
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-        filename: '[name].[hash].js',
+        filename: '[name].[fullhash].js',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/',
     },
@@ -48,11 +49,12 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(),
+        new DotenvFlow(),
         new HtmlWebpackPlugin({
             template: 'public/index.html',
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].[hash].css',
+            filename: '[name].[fullhash].css',
         }),
     ],
 };

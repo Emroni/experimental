@@ -9,17 +9,6 @@ window.addEventListener('load', () => {
     // Get elements 
     container = document.getElementById('player');
 
-    // Add listeners
-    window.addEventListener('popstate', handleChange);
-    window.addEventListener('resize', handleResize);
-    handleChange();
-});
-
-function handleChange() {
-    // Reset state
-    cancelAnimationFrame(frameRequest);
-    container.innerHTML = '';
-
     // Get experiment loader
     const path = window.location.pathname.replace('/', '');
     const loader = experiments[path];
@@ -35,6 +24,9 @@ function handleChange() {
 
             // Add to container
             container.appendChild(experiment.element);
+    
+            // Add listeners
+            window.addEventListener('resize', handleResize);
             handleResize();
 
             // Start ticking
@@ -42,7 +34,7 @@ function handleChange() {
             tick();
         });
     }
-}
+});
 
 function handleResize() {
     // Get scale

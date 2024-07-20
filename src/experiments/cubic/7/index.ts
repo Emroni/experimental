@@ -1,4 +1,4 @@
-import { PI2, PI_HALF, PI_QUARTER } from '@/constants';
+import { PI2, PI_HALF } from '@/constants';
 import { easeInOutCubic } from '@/helpers';
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -103,7 +103,7 @@ planes.add(planeTopLeft);
 planeTopLeft.scale.x = WIDE / PLANE * 2;
 planeTopLeft.position.x = -WIDE;
 planeTopLeft.position.y = PLANE / 2 + WIDE;
-planeTopLeft.rotation.y = -Math.PI / 2;
+planeTopLeft.rotation.y = -PI_HALF;
 
 const planeTopMiddle = new THREE.Mesh(planeGeometry, planeMaterial);
 planes.add(planeTopMiddle);
@@ -116,14 +116,14 @@ planes.add(planeTopRight);
 planeTopRight.scale.x = WIDE / PLANE * 2;
 planeTopRight.position.x = WIDE;
 planeTopRight.position.y = PLANE / 2 + WIDE;
-planeTopRight.rotation.y = Math.PI / 2;
+planeTopRight.rotation.y = PI_HALF;
 
 const planeBottomLeft = new THREE.Mesh(planeGeometry, planeMaterial);
 planes.add(planeBottomLeft);
 planeBottomLeft.scale.x = WIDE / PLANE * 2;
 planeBottomLeft.position.x = -WIDE;
 planeBottomLeft.position.y = -PLANE / 2 - WIDE;
-planeBottomLeft.rotation.y = Math.PI / 2;
+planeBottomLeft.rotation.y = PI_HALF;
 
 const planeBottomMiddle = new THREE.Mesh(planeGeometry, planeMaterial);
 planes.add(planeBottomMiddle);
@@ -136,7 +136,7 @@ planes.add(planeBottoRight);
 planeBottoRight.scale.x = WIDE / PLANE * 2;
 planeBottoRight.position.x = WIDE;
 planeBottoRight.position.y = -PLANE / 2 - WIDE;
-planeBottoRight.rotation.y = -Math.PI / 2;
+planeBottoRight.rotation.y = -PI_HALF;
 
 let side: string;
 
@@ -146,7 +146,7 @@ export default {
     size: SIZE,
     onTick: (time: number) => {
         container.rotation.x = 0.2 * Math.sin(PI2 * time) - 0.55;
-        container.rotation.y = -PI_HALF * time + PI_QUARTER;
+        container.rotation.y = -PI_HALF * time + PI_HALF / 2;
 
         let s = 'middle';
         if (time < 0.28) {

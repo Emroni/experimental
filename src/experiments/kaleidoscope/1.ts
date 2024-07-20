@@ -1,4 +1,5 @@
-import Base, { COLORS, PI2, RADIUS, Shape } from './base';
+import { PI2 } from '@/constants';
+import Base, { COLORS, RADIUS, Shape } from './base';
 
 for (let i = 0; i < COLORS.length; i++) {
     const layer = i / COLORS.length;

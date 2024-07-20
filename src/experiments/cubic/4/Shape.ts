@@ -1,4 +1,4 @@
-import { PI2 } from '@/constants';
+import { PI2, PI_HALF } from '@/constants';
 import * as THREE from 'three';
 
 export const CUBE_ROWS = 20;
@@ -52,7 +52,7 @@ export default class Shape extends THREE.Mesh {
         this.add(this.cube);
 
         if (flipped) {
-            this.cube.rotation.y = Math.PI / 2;
+            this.cube.rotation.y = PI_HALF;
         }
     }
 
