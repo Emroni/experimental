@@ -20,6 +20,9 @@ jobs:
         with:
           node-version: "18.x"
 
+      - name: Set .env values
+        run: echo GTM_STREAM_ID=${{ secrets.GTM_STREAM_ID }} > .env
+
       - name: Install Website Dependencies
         run: yarn install --frozen-lockfile
 
