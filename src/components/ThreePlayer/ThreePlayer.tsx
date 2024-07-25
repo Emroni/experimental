@@ -64,7 +64,7 @@ export default class ThreePlayer extends Component {
         this.renderer.render(this.scene, this.camera);
     }
 
-    handleResize() {
+    handleResize = () => {
         //  Resize canvas to fit
         if (this.canvasContainerRef.current) {
             const containerRect = this.canvasContainerRef.current.getBoundingClientRect();
