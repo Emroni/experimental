@@ -47,8 +47,8 @@ export default class Cubic1 extends ThreePlayer {
         }
     }
 
-    onTick = (time: number) => {
-        this.shapes.forEach(shape => shape.move(time));
+    onTick = (progress: number) => {
+        this.shapes.forEach(shape => shape.move(progress));
     }
 
 }

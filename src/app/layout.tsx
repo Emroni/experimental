@@ -28,7 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ThemeProvider>
             <Box component="body" display="flex" height="100vh">
                 <Sidebar />
-                <Box component="main" flex={1}>
+                <Box component="main" flex={1} position="relative">
                     {children}
                 </Box>
             </Box>

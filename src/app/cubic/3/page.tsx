@@ -55,8 +55,8 @@ export default class Cubic3 extends ThreePlayer {
         }
     }
 
-    onTick = (time: number) => {
-        this.particles.forEach(particle => particle.move(time));
+    onTick = (progress: number) => {
+        this.particles.forEach(particle => particle.move(progress));
     }
 
 }
