@@ -43,3 +43,6 @@ jobs:
 
       - name: Sync static folder
         run: rsync -avz --delete .next/static ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_ROOT }}/.next
+
+      - name: Sync assets folder
+        run: rsync -avz --delete public/assets ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_ROOT }}/public
