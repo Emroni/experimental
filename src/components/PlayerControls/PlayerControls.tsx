@@ -15,9 +15,9 @@ export default function PlayerControls({ playing, progress, onProgressChange, on
         <Box>
             <IconButton onClick={() => onToggle()}>
                 {playing ? (
-                    <PlayArrow />
-                ) : (
                     <Pause />
+                ) : (
+                    <PlayArrow />
                 )}
             </IconButton>
         </Box>
