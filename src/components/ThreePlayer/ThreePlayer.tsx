@@ -33,8 +33,13 @@ export default class ThreePlayer extends Component<{}, ThreePlayerState> {
         // Create components
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, 1, 1, 1000);
+
+        // Create renderer 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(size, size);
+        this.renderer.domElement.style.left = '50%';
+        this.renderer.domElement.style.top = '50%';
+        this.renderer.domElement.style.position = 'absolute';
 
         // Add to render container
         if (this.canvasContainerRef.current) {
@@ -82,7 +87,7 @@ export default class ThreePlayer extends Component<{}, ThreePlayerState> {
             const { size } = this.state;
             const containerRect = this.canvasContainerRef.current.getBoundingClientRect();
             const scale = Math.min(size, containerRect.width, containerRect.height) / size;
-            this.renderer.domElement.style.transform = scale < 1 ? `scale(${scale})` : '';
+            this.renderer.domElement.style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
     }
 
@@ -119,13 +124,9 @@ export default class ThreePlayer extends Component<{}, ThreePlayerState> {
 
     render() {
         return <>
-            <Box
-                alignItems="center"
-                display="flex"
-                height="100%"
-                justifyContent="center"
-                ref={this.canvasContainerRef}
-            />
+            <Box flex={1} padding={3}>
+                <Box height="100%" position="relative" ref={this.canvasContainerRef} />
+            </Box>
             <PlayerControls
                 playing={this.state.playing}
                 progress={this.state.progress}

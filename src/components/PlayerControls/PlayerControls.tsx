@@ -11,7 +11,7 @@ export default function PlayerControls({ playing, progress, onProgressChange, on
         onProgressChange(value);
     }
 
-    return <Box alignItems="center" bottom={0} display="flex" gap={1} left={0} padding={3} position="absolute" right={0} zIndex={1}>
+    return <Box alignItems="center" display="flex" gap={1} padding={3}>
         <Box>
             <IconButton onClick={() => onToggle()}>
                 {playing ? (
