@@ -52,7 +52,6 @@ export default function SimplexNoise1() {
 
     return <PixiPlayer
         duration={5}
-        size={640}
         onInit={handleInit}
         onTick={handleTick}
     />;
