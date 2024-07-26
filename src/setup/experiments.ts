@@ -47,6 +47,13 @@ const enabled = [
     'cubic/1',
     'cubic/2',
     'cubic/3',
+    'hexagon/1',
+    'hexagon/2',
+    'hexagon/3',
+    'hexagon/4',
+    'hexagon/5',
+    'simplex-noise/1',
+    'simplex-noise/2',
 ];
 
 export const experiments: Experiment[] = items.map((item, index) => ({

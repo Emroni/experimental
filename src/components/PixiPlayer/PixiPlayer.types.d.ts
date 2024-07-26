@@ -1,12 +1,13 @@
-interface ThreePlayerProps {
+interface PixiPlayerProps {
     duration?: number;
     size?: number;
-    onInit(scene: THREE.Scene, camera: THREE.PerspectiveCamera): void;
+    onInit(app: PIXI.Application<PIXI.Renderer>): void;
     onTick(progress: number): void;
 }
 
-interface ThreePlayerState {
+interface PixiPlayerState {
     duration: number;
+    initialized: boolean;
     playing: boolean;
     progress: number;
     size: number;

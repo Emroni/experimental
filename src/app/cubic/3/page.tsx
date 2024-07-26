@@ -1,35 +1,30 @@
 'use client';
 import { ThreePlayer } from '@/components';
 import { PI_D4, PI_D8 } from '@/setup';
-import { NextPage } from 'next';
 import * as THREE from 'three';
 import Particle, { PARTICLE_ROWS, PARTICLE_SIZE } from './Particle';
 
-export default class Cubic3 extends ThreePlayer {
+export default function Cubic3() {
 
-    particles: Particle[] = [];
-    depth = 1000;
+    const depth = 1000;
+    const particles: Particle[] = [];
 
-    constructor(props: NextPage) {
-        super(props, {
-            duration: 12,
-        });
-    }
-
-    onMount = () => {
-        // Update components
-        this.camera.position.z = this.depth;
-        this.scene.rotation.x = PI_D8;
-        this.scene.rotation.y = PI_D4;
+    function handleInit(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+        // Update camera
+        camera.position.z = depth;
+        
+        // Update scene
+        scene.rotation.x = PI_D8;
+        scene.rotation.y = PI_D4;
 
         // Add ambient light
         const ambient = new THREE.AmbientLight(0xFFFFFF, 0.5);
-        this.scene.add(ambient);
+        scene.add(ambient);
 
         // Add point light
-        const light = new THREE.PointLight(0xFFFFFF, this.depth ** 2);
-        this.scene.add(light);
-        light.position.z = this.depth;
+        const light = new THREE.PointLight(0xFFFFFF, depth ** 2);
+        scene.add(light);
+        light.position.z = depth;
 
         // Get shape
         const shapeGeometry = new THREE.DodecahedronGeometry((PARTICLE_ROWS * PARTICLE_SIZE) / 2);
@@ -47,16 +42,23 @@ export default class Cubic3 extends ThreePlayer {
                     const particle = new Particle(x, y, z);
                     raycaster.set(particle.cube.position, ray);
                     if (raycaster.intersectObject(shape).length === 1) {
-                        this.scene.add(particle);
-                        this.particles.push(particle);
+                        scene.add(particle);
+                        particles.push(particle);
                     }
                 }
             }
         }
     }
 
-    onTick = (progress: number) => {
-        this.particles.forEach(particle => particle.move(progress));
+    function handleTick(progress: number) {
+        particles.forEach(particle => particle.move(progress));
     }
+
+    return <ThreePlayer
+        duration={12}
+        size={640}
+        onInit={handleInit}
+        onTick={handleTick}
+    />;
 
 }
