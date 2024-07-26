@@ -19,46 +19,60 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
         // Prepare state
         this.state = {
             duration: 10,
+            initialized: false,
             playing: false,
             progress: 0,
-            size:  640,
+            size: 640,
             startTime: 0,
             ...props,
         };
-
-        // Create components
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, 1, 1, 1000);
-
-        // Create renderer 
-        this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize(this.state.size, this.state.size);
-        this.renderer.domElement.style.left = '50%';
-        this.renderer.domElement.style.top = '50%';
-        this.renderer.domElement.style.position = 'absolute';
-
-        // Initialize page
-        this.props.onInit(this.scene, this.camera);
     }
 
     componentDidMount() {
-        // Add to render container
-        if (this.canvasContainerRef.current) {
-            while (this.canvasContainerRef.current.childElementCount) {
-                this.canvasContainerRef.current.lastChild?.remove();
+        this.init();
+    }
+
+    init = () => {
+        // Initialize
+        if (!this.state.initialized) {
+            // Create components
+            this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera(75, 1, 1, 1000);
+
+            // Create renderer 
+            this.renderer = new THREE.WebGLRenderer();
+            this.renderer.setSize(this.state.size, this.state.size);
+            this.renderer.domElement.style.left = '50%';
+            this.renderer.domElement.style.top = '50%';
+            this.renderer.domElement.style.position = 'absolute';
+
+            // Initialize page
+            this.props.onInit(this.scene, this.camera);
+            this.setState({
+                initialized: true,
+            }, () => {
+                this.init();
+            });
+
+        } else {
+            // Add to render container
+            if (this.canvasContainerRef.current) {
+                while (this.canvasContainerRef.current.childElementCount) {
+                    this.canvasContainerRef.current.lastChild?.remove();
+                }
+                this.canvasContainerRef.current.appendChild(this.renderer.domElement);
             }
-            this.canvasContainerRef.current.appendChild(this.renderer.domElement);
+
+            // Update components
+            this.camera.updateProjectionMatrix();
+
+            // Add listeners
+            window.addEventListener('resize', this.handleResize);
+            this.handleResize();
+
+            // Start playing
+            this.togglePlaying(true);
         }
-
-        // Update components
-        this.camera.updateProjectionMatrix();
-
-        // Add listeners
-        window.addEventListener('resize', this.handleResize);
-        this.handleResize();
-
-        // Start playing
-        this.togglePlaying(true);
     }
 
     componentWillUnmount() {
