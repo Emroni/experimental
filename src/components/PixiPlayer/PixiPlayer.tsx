@@ -1,17 +1,15 @@
 'use client';
 import { Box } from '@mui/material';
+import * as PIXI from 'pixi.js';
 import { Component, createRef } from 'react';
-import * as THREE from 'three';
 import PlayerControls from '../PlayerControls/PlayerControls';
 
-export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayerState> {
+export default class PixiPlayer extends Component<PixiPlayerProps, PixiPlayerState> {
 
-    camera: THREE.PerspectiveCamera;
+    app: PIXI.Application<PIXI.Renderer>;
     canvasContainerRef: React.RefObject<HTMLDivElement>;
-    renderer: THREE.WebGLRenderer;
-    scene: THREE.Scene;
 
-    constructor(props: ThreePlayerProps) {
+    constructor(props: PixiPlayerProps) {
         super(props);
 
         this.canvasContainerRef = createRef();
@@ -19,66 +17,83 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
         // Prepare state
         this.state = {
             duration: 10,
+            initialized: false,
             playing: false,
             progress: 0,
-            size:  640,
+            size: 640,
             startTime: 0,
             ...props,
         };
-
-        // Create components
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, 1, 1, 1000);
-
-        // Create renderer 
-        this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize(this.state.size, this.state.size);
-        this.renderer.domElement.style.left = '50%';
-        this.renderer.domElement.style.top = '50%';
-        this.renderer.domElement.style.position = 'absolute';
-
-        // Initialize page
-        this.props.onInit(this.scene, this.camera);
     }
 
     componentDidMount() {
-        // Add to render container
-        if (this.canvasContainerRef.current) {
-            while (this.canvasContainerRef.current.childElementCount) {
-                this.canvasContainerRef.current.lastChild?.remove();
-            }
-            this.canvasContainerRef.current.appendChild(this.renderer.domElement);
-        }
-
-        // Update components
-        this.camera.updateProjectionMatrix();
-
-        // Add listeners
-        window.addEventListener('resize', this.handleResize);
-        this.handleResize();
-
-        // Start playing
-        this.togglePlaying(true);
+        this.init();
     }
 
     componentWillUnmount() {
         // Remove listeners
-        this.renderer?.setAnimationLoop(null);
+        if (this.state.initialized) {
+            this.app.ticker.destroy();
+        }
         window.removeEventListener('resize', this.handleResize);
     }
 
-    handleAnimationLoop = () => {
-        const { duration, startTime } = this.state;
+    init = async () => {
+        // Initialize
+        if (!this.app) {
+            // Create app
+            this.app = new PIXI.Application();
 
+            await this.app.init({
+                antialias: true,
+                width: this.state.size,
+                height: this.state.size,
+            });
+
+            this.app.canvas.style.left = '50%';
+            this.app.canvas.style.top = '50%';
+            this.app.canvas.style.position = 'absolute';
+
+            // Initialize page
+            this.props.onInit(this.app);
+            this.setState({
+                initialized: true,
+            }, () => {
+                this.init();
+            });
+        }
+
+        // Mount
+        if (this.state.initialized) {
+            // Add to render container
+            if (this.canvasContainerRef.current) {
+                while (this.canvasContainerRef.current.childElementCount) {
+                    this.canvasContainerRef.current.lastChild?.remove();
+                }
+                this.canvasContainerRef.current.appendChild(this.app.canvas);
+            }
+
+            // Add listeners
+            this.app.ticker.add(this.handleTicker);
+            window.addEventListener('resize', this.handleResize);
+            this.handleResize();
+
+            // Start playing
+            this.togglePlaying(true);
+        }
+    }
+
+    handleTicker = () => {
+        const { duration, startTime } = this.state;
+        
         // Update progress
         const progress = (((performance.now() / 1000) - startTime) / duration) % 1;
         this.setState({
             progress,
         });
 
-        // Call tick and render
+        // Call tick
         this.props.onTick(progress);
-        this.renderer.render(this.scene, this.camera);
     }
 
     handleResize = () => {
@@ -87,7 +102,7 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
             const { size } = this.state;
             const containerRect = this.canvasContainerRef.current.getBoundingClientRect();
             const scale = Math.min(size, containerRect.width, containerRect.height) / size;
-            this.renderer.domElement.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            this.app.canvas.style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
     }
 
@@ -96,7 +111,8 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
             progress,
             startTime: (performance.now() / 1000) - (progress * prevState.duration),
         }), () => {
-            this.handleAnimationLoop();
+            this.handleTicker();
+            this.app.ticker.update();
         });
     }
 
@@ -105,11 +121,11 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
             playing: play !== undefined ? play : !prevState.playing,
             startTime: (performance.now() / 1000) - (prevState.progress * prevState.duration),
         }), () => {
-            // Toggle animation loop
+            // Toggle ticker
             if (this.state.playing) {
-                this.renderer.setAnimationLoop(this.handleAnimationLoop);
+                this.app.ticker.start();
             } else {
-                this.renderer.setAnimationLoop(null);
+                this.app.ticker.stop();
             }
         });
     }
