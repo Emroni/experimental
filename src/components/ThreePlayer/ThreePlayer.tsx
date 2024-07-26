@@ -1,46 +1,45 @@
 'use client';
 import { Box } from '@mui/material';
-import { NextPage } from 'next';
 import { Component, createRef } from 'react';
 import * as THREE from 'three';
 import PlayerControls from '../PlayerControls/PlayerControls';
 
-export default class ThreePlayer extends Component<{}, ThreePlayerState> {
+export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayerState> {
 
     camera: THREE.PerspectiveCamera;
     canvasContainerRef: React.RefObject<HTMLDivElement>;
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
 
-    constructor(pageProps: NextPage, playerProps: ThreePlayerProps) {
-        super(pageProps);
+    constructor(props: ThreePlayerProps) {
+        super(props);
 
         this.canvasContainerRef = createRef();
 
         // Prepare state
         this.state = {
-            duration: playerProps.duration || 10,
+            duration: 10,
             playing: false,
             progress: 0,
-            size: playerProps.size || 640,
+            size:  640,
             startTime: 0,
+            ...props,
         };
-    }
-
-    componentDidMount() {
-        const { size } = this.state;
 
         // Create components
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, 1, 1, 1000);
+        this.props.onInit(this.scene, this.camera);
 
         // Create renderer 
         this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize(size, size);
+        this.renderer.setSize(this.state.size, this.state.size);
         this.renderer.domElement.style.left = '50%';
         this.renderer.domElement.style.top = '50%';
         this.renderer.domElement.style.position = 'absolute';
+    }
 
+    componentDidMount() {
         // Add to render container
         if (this.canvasContainerRef.current) {
             while (this.canvasContainerRef.current.childElementCount) {
@@ -50,7 +49,6 @@ export default class ThreePlayer extends Component<{}, ThreePlayerState> {
         }
 
         // Update components
-        this.onMount();
         this.camera.updateProjectionMatrix();
 
         // Add listeners
@@ -77,7 +75,7 @@ export default class ThreePlayer extends Component<{}, ThreePlayerState> {
         });
 
         // Call tick and render
-        this.onTick(progress);
+        this.props.onTick(progress);
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -112,14 +110,6 @@ export default class ThreePlayer extends Component<{}, ThreePlayerState> {
                 this.renderer.setAnimationLoop(null);
             }
         });
-    }
-
-    onMount = () => {
-        // Override in experiments
-    }
-
-    onTick = (time: number) => {
-        // Override in experiments
     }
 
     render() {
