@@ -1,90 +1,145 @@
 'use client';
-import { PixiPlayer } from '@/components';
+import { ExperimentControls, PixiPlayer } from '@/components';
 import { PI_M2 } from '@/setup';
 import * as PIXI from 'pixi.js';
+import React from 'react';
 
-export default function Hexagon3() {
+export default class Hexagon3 extends React.Component<any, ExperimentControlItems> {
 
-    const border = 2;
-    const container = new PIXI.Container();
-    const rows: PIXI.Container[][] = [];
-    const size = 50;
-    const spacing = 5;
+    container = new PIXI.Container();
+    layers: PIXI.Container[] = [];
+    particles: PIXI.Container[] = [];
+    shapeSize = 100;
+    size = 640;
 
-    function handleInit(app: PIXI.Application) {
-        app.stage.addChild(container);
+    shapeTexture: PIXI.Texture;
+
+    state = {
+        border: { min: 0, max: 10, step: 1, value: 1 },
+        size: { min: 10, max: 100, step: 1, value: 30 },
+        spacing: { min: 0, max: 100, step: 1, value: 5 },
+        speed: { min: 1, max: 10, step: 1, value: 1 },
+    };
+
+    handleInit = (app: PIXI.Application) => {
+        app.stage.addChild(this.container);
 
         // Get shape texture
         const shape = new PIXI.Graphics()
-            .moveTo(0, 0.5 * (size + border))
-            .lineTo(0.4330125 * (size + border), 0.25 * (size + border))
-            .lineTo(0.4330125 * (size + border), -0.25 * (size + border))
-            .lineTo(0, -0.5 * (size + border))
-            .lineTo(-0.4330125 * (size + border), -0.25 * (size + border))
-            .lineTo(-0.4330125 * (size + border), 0.25 * (size + border))
-            .fill(0)
-            .moveTo(0, 0.5 * size)
-            .lineTo(0.4330125 * size, 0.25 * size)
-            .lineTo(0.4330125 * size, -0.25 * size)
-            .lineTo(0, -0.5 * size)
-            .lineTo(-0.4330125 * size, -0.25 * size)
-            .lineTo(-0.4330125 * size, 0.25 * size)
+            .moveTo(0, 0.5 * this.shapeSize)
+            .lineTo(0.4330125 * this.shapeSize, 0.25 * this.shapeSize)
+            .lineTo(0.4330125 * this.shapeSize, -0.25 * this.shapeSize)
+            .lineTo(0, -0.5 * this.shapeSize)
+            .lineTo(-0.4330125 * this.shapeSize, -0.25 * this.shapeSize)
+            .lineTo(-0.4330125 * this.shapeSize, 0.25 * this.shapeSize)
             .fill(0xFFFFFF);
-        const texture = app.renderer.generateTexture(shape);
+        this.shapeTexture = app.renderer.generateTexture(shape);
 
-        // Create add
-        function add(row: PIXI.Container[], x: number, y: number) {
-            x = (x - 2.125) * ((size * 0.4330125) + spacing) + app.canvas.width / 2;
-            y = (y - 0.05) * ((size * 0.75) + spacing) + app.canvas.height / 2;
+        // Trigger state change
+        this.setState({});
+    }
 
-            if (x <= -size / 2 || x >= app.canvas.width + size / 2 || y < -size / 2 || y >= app.canvas.height + size / 2) {
-                return;
-            }
+    componentDidUpdate() {
+        const { size } = this.state;
+        const layerCount = Math.ceil(this.size / size.value);
 
-            const hex = new PIXI.Container();
-            container.addChild(hex);
-            row.push(hex);
-            hex.position.x = x;
-            hex.position.y = y;
-
-            const sprite = PIXI.Sprite.from(texture);
-            hex.addChild(sprite);
-            sprite.position.x = -sprite.width / 2;
-            sprite.position.y = -sprite.height / 2;
+        // Create missing layers
+        for (let i = this.layers.length; i < layerCount; i++) {
+            const layer = new PIXI.Container();
+            this.layers.push(layer);
         }
 
-        // Add rows
+        // Remove particles from layers and layers from container
+        this.particles.forEach(particle => particle.removeFromParent());
+        this.layers.forEach(layer => layer.removeFromParent());
+
+        // Add layers and particles
         let x = 0, y = 0;
-        for (let i = 0; i <= 13; i++) {
-            const row: PIXI.Container[] = [];
-            rows.push(row);
+        for (let i = 0; i < layerCount; i++) {
+            // Add layer
+            const layer = this.layers[i];
+            this.container.addChild(layer);
 
-            add(row, x += 2, y);
-            for (let j = 0; j < i - 1; j++) add(row, ++x, ++y);
-            for (let j = 0; j < i; j++) add(row, --x, ++y);
-            for (let j = 0; j < i; j++) add(row, x -= 2, y);
-            for (let j = 0; j < i; j++) add(row, --x, --y);
-            for (let j = 0; j < i; j++) add(row, ++x, --y);
-            for (let j = 0; j < i; j++) add(row, x += 2, y);
+            // Add layer particles
+            this.addParticle(layer, x += 2, y);
+            for (let j = 0; j < i - 1; j++) this.addParticle(layer, ++x, ++y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, --x, ++y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, x -= 2, y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, --x, --y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, ++x, --y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, x += 2, y);
         }
     }
 
-    function handleTick(progress: number) {
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            const alpha = Math.sin(PI_M2 * (progress - i / rows.length)) + 0.5;
+    addParticle = (layer: PIXI.Container, x: number, y: number) => {
+        const { border, size, spacing } = this.state;
 
-            for (let j = 0; j < row.length; j++) {
-                let hex = row[j];
-                hex.scale.x = hex.scale.y = alpha;
+        // Get position
+        x = (x - 2.125) * ((size.value * 0.4330125) + spacing.value) + this.size / 2;
+        y = (y - 0.05) * ((size.value * 0.75) + spacing.value) + this.size / 2;
+
+        if (x <= -size.value / 2 || x >= this.size + size.value / 2 || y < -size.value / 2 || y >= this.size + size.value / 2) {
+            return;
+        }
+
+        // Get particle
+        let particle = this.particles.find(particle => !particle.parent);
+        if (!particle) {
+            particle = new PIXI.Container();
+            this.particles.push(particle);
+
+            const shapeOuter = PIXI.Sprite.from(this.shapeTexture);
+            particle.addChild(shapeOuter);
+            shapeOuter.tint = 0;
+
+            const shapeInner = PIXI.Sprite.from(this.shapeTexture);
+            particle.addChild(shapeInner);
+        }
+
+        // Update particle
+        layer.addChild(particle);
+        particle.position.x = x;
+        particle.position.y = y;
+
+        // Update outer shape
+        const shapeOuter = particle.children[0];
+        shapeOuter.setSize(size.value);
+        shapeOuter.position.x = -shapeOuter.width / 2;
+        shapeOuter.position.y = -shapeOuter.height / 2;
+        
+        // Update inner shape
+        const shapeInner = particle.children[1];
+        shapeInner.setSize(size.value - border.value);
+        shapeInner.position.x = -shapeInner.width / 2;
+        shapeInner.position.y = -shapeInner.height / 2;
+    }
+
+    handleTick = (progress: number) => {
+        const { speed } = this.state;
+
+        for (let i = 0; i < this.container.children.length; i++) {
+            const layer = this.container.children[i];
+            const scale = Math.sin(PI_M2 * (progress * speed.value - i / this.container.children.length)) + 0.5;
+
+            for (let j = 0; j < layer.children.length; j++) {
+                const particle = layer.children[j];
+                particle.scale.set(scale);
             }
         }
     }
 
-    return <PixiPlayer
-        duration={5}
-        onInit={handleInit}
-        onTick={handleTick}
-    />;
+    render() {
+        return <>
+            <ExperimentControls
+                items={this.state}
+                onChange={items => this.setState(items)}
+            />
+            <PixiPlayer
+                duration={5}
+                onInit={this.handleInit}
+                onTick={this.handleTick}
+            />
+        </>;
+    }
 
 }
