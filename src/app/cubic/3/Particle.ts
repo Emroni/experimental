@@ -52,8 +52,8 @@ export default class Particle extends THREE.Object3D {
         this.cube.position.z = PARTICLE_SIZE * (z - (PARTICLE_ROWS / 2 - 0.5));
     }
 
-    move(progress: number) {
-        const t = progress * 12 - this.delay;
+    move(tick: number, delay: number) {
+        const t = tick - (this.delay * delay);
         this.rotation.x = PI_D2 * (easeInOutCubic(t) + easeInOutCubic(t - 6));
         this.rotation.z = PI_D2 * (easeInOutCubic(t - 2) + easeInOutCubic(t - 8));
         this.rotation.y = -PI_D2 * (easeInOutCubic(t - 4) + easeInOutCubic(t - 10));

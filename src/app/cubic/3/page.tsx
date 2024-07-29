@@ -1,18 +1,26 @@
 'use client';
-import { ThreePlayer } from '@/components';
+import { ExperimentControls, ThreePlayer } from '@/components';
 import { PI_D4, PI_D8 } from '@/setup';
+import React from 'react';
 import * as THREE from 'three';
 import Particle, { PARTICLE_ROWS, PARTICLE_SIZE } from './Particle';
 
-export default function Cubic3() {
+export default class Cubic3 extends React.Component<any, ExperimentControlItems> {
 
-    const depth = 1000;
-    const particles: Particle[] = [];
+    // TODO: Check performance drop
 
-    function handleInit(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+    depth = 1000;
+    particles: Particle[] = [];
+
+    state = {
+        delay: { min: 0, max: 2, value: 1 },
+        speed: { min: 1, max: 10, step: 1, value: 1 },
+    };
+
+    handleInit = (scene: THREE.Scene, camera: THREE.PerspectiveCamera) => {
         // Update camera
-        camera.position.z = depth;
-        
+        camera.position.z = this.depth;
+
         // Update scene
         scene.rotation.x = PI_D8;
         scene.rotation.y = PI_D4;
@@ -22,9 +30,9 @@ export default function Cubic3() {
         scene.add(ambient);
 
         // Add point light
-        const light = new THREE.PointLight(0xFFFFFF, depth ** 2);
+        const light = new THREE.PointLight(0xFFFFFF, this.depth ** 2);
         scene.add(light);
-        light.position.z = depth;
+        light.position.z = this.depth;
 
         // Get shape
         const shapeGeometry = new THREE.DodecahedronGeometry((PARTICLE_ROWS * PARTICLE_SIZE) / 2);
@@ -43,22 +51,32 @@ export default function Cubic3() {
                     raycaster.set(particle.cube.position, ray);
                     if (raycaster.intersectObject(shape).length === 1) {
                         scene.add(particle);
-                        particles.push(particle);
+                        this.particles.push(particle);
                     }
                 }
             }
         }
     }
 
-    function handleTick(progress: number) {
-        particles.forEach(particle => particle.move(progress));
+    handleTick = (progress: number) => {
+        const { delay, speed } = this.state;
+        const tick = (progress * speed.value) % 1 * 12;
+        this.particles.forEach(particle => particle.move(tick, delay.value));
     }
 
-    return <ThreePlayer
-        duration={12}
-        size={640}
-        onInit={handleInit}
-        onTick={handleTick}
-    />;
+
+    render() {
+        return <>
+            <ExperimentControls
+                items={this.state}
+                onChange={items => this.setState(items)}
+            />
+            <ThreePlayer
+                duration={12}
+                onInit={this.handleInit}
+                onTick={this.handleTick}
+            />
+        </>;
+    }
 
 }

@@ -1,25 +1,31 @@
 'use client';
-import { ThreePlayer } from '@/components';
+import { ExperimentControls, ThreePlayer } from '@/components';
+import React from 'react';
 import * as THREE from 'three';
 import Shape, { CUBE_ROWS } from './Shape';
 
-export default function Cubic2() {
+export default class Cubic2 extends React.Component<any, ExperimentControlItems> {
 
-    const depth = 1000;
-    const shapes: Shape[] = [];
+    depth = 1000;
+    shapes: Shape[] = [];
 
-    function handleInit(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+    state = {
+        delay: { min: 0, max: 2, value: 1 },
+        speed: { min: 1, max: 10, step: 1, value: 1 },
+    };
+
+    handleInit = (scene: THREE.Scene, camera: THREE.PerspectiveCamera) => {
         // Update camera
-        camera.position.z = depth;
+        camera.position.z = this.depth;
 
         // Add ambient light
         const ambient = new THREE.AmbientLight(0xFFFFFF, 0.5);
         scene.add(ambient);
 
         // Add point light
-        const light = new THREE.PointLight(0xFFFFFF, depth ** 2);
+        const light = new THREE.PointLight(0xFFFFFF, this.depth ** 2);
         scene.add(light);
-        light.position.z = depth;
+        light.position.z = this.depth;
 
         // Add shapes
         for (let x = 0; x < CUBE_ROWS; x++) {
@@ -27,20 +33,30 @@ export default function Cubic2() {
                 for (let z = 0; z < CUBE_ROWS; z++) {
                     const shape = new Shape(x, y, z);
                     scene.add(shape);
-                    shapes.push(shape);
+                    this.shapes.push(shape);
                 }
             }
         }
     }
 
-    function handleTick(progress: number) {
-        shapes.forEach(shape => shape.move(progress));
+    handleTick = (progress: number) => {
+        const { delay, speed } = this.state;
+        const tick = (progress * speed.value) % 1 * 12;
+        this.shapes.forEach(shape => shape.move(tick, delay.value));
     }
 
-    return <ThreePlayer
-        duration={12}
-        size={640}
-        onInit={handleInit}
-        onTick={handleTick}
-    />;
+    render() {
+        return <>
+            <ExperimentControls
+                items={this.state}
+                onChange={items => this.setState(items)}
+            />
+            <ThreePlayer
+                duration={12}
+                onInit={this.handleInit}
+                onTick={this.handleTick}
+            />
+        </>;
+    }
+
 }

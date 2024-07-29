@@ -1,78 +1,126 @@
 'use client';
-import { PixiPlayer } from '@/components';
+import { ExperimentControls, PixiPlayer } from '@/components';
 import { PI_M2 } from '@/setup';
 import * as PIXI from 'pixi.js';
+import React from 'react';
 
-export default function Hexagon1() {
+export default class Hexagon1 extends React.Component<any, ExperimentControlItems> {
 
-    const container = new PIXI.Container();
-    const rows: PIXI.Sprite[][] = [];
-    const size = 30;
-    const spacing = 5;
+    container = new PIXI.Container();
+    layers: PIXI.Container[] = [];
+    particles: PIXI.Sprite[] = [];
+    particleSize = 100;
+    size = 640;
 
-    function handleInit(app: PIXI.Application) {
-        app.stage.addChild(container);
+    particleTexture: PIXI.Texture;
+
+    state = {
+        size: { min: 10, max: 100, step: 1, value: 30 },
+        spacing: { min: 0, max: 100, step: 1, value: 5 },
+        speed: { min: 1, max: 10, step: 1, value: 1 },
+    };
+
+    handleInit = (app: PIXI.Application) => {
+        app.stage.addChild(this.container);
 
         // Get shape texture
         const shape = new PIXI.Graphics()
-            .moveTo(0, 0.5 * size)
-            .lineTo(0.4330125 * size, 0.25 * size)
-            .lineTo(0.4330125 * size, -0.25 * size)
-            .lineTo(0, -0.5 * size)
-            .lineTo(-0.4330125 * size, -0.25 * size)
-            .lineTo(-0.4330125 * size, 0.25 * size)
+            .moveTo(0, 0.5 * this.particleSize)
+            .lineTo(0.4330125 * this.particleSize, 0.25 * this.particleSize)
+            .lineTo(0.4330125 * this.particleSize, -0.25 * this.particleSize)
+            .lineTo(0, -0.5 * this.particleSize)
+            .lineTo(-0.4330125 * this.particleSize, -0.25 * this.particleSize)
+            .lineTo(-0.4330125 * this.particleSize, 0.25 * this.particleSize)
             .fill(0xFFFFFF);
-        const texture = app.renderer.generateTexture(shape);
+        this.particleTexture = app.renderer.generateTexture(shape);
 
-        // Create add
-        function add(row: PIXI.Sprite[], x: number, y: number) {
-            x = (x - 2.625) * ((size * 0.4330125) + spacing) + app.canvas.width / 2;
-            y = (y - 0.55) * ((size * 0.75) + spacing) + app.canvas.height / 2;
+        // Trigger state change
+        this.setState({});
+    }
 
-            if (x <= -size || x >= app.canvas.width || y < -size || y >= app.canvas.height) {
-                return;
-            }
+    componentDidUpdate() {
+        const { size } = this.state;
+        const layerCount = Math.ceil(this.size / size.value);
 
-            const hex = PIXI.Sprite.from(texture);
-            container.addChild(hex);
-            row.push(hex);
+        // Create missing layers
+        for (let i = this.layers.length; i < layerCount; i++) {
+            const layer = new PIXI.Container();
+            this.layers.push(layer);
+        }
 
-            hex.position.x = x;
-            hex.position.y = y;
-        };
+        // Remove particles from layers and layers from container
+        this.particles.forEach(particle => particle.removeFromParent());
+        this.layers.forEach(layer => layer.removeFromParent());
 
-        // Add rows
+        // Add layers and particles
         let x = 0, y = 0;
-        for (let i = 0; i <= 14; i++) {
-            const row: PIXI.Sprite[] = [];
-            rows.push(row);
+        for (let i = 0; i < layerCount; i++) {
+            // Add layer
+            const layer = this.layers[i];
+            this.container.addChild(layer);
 
-            add(row, x += 2, y);
-            for (let j = 0; j < i - 1; j++) add(row, ++x, ++y);
-            for (let j = 0; j < i; j++) add(row, --x, ++y);
-            for (let j = 0; j < i; j++) add(row, x -= 2, y);
-            for (let j = 0; j < i; j++) add(row, --x, --y);
-            for (let j = 0; j < i; j++) add(row, ++x, --y);
-            for (let j = 0; j < i; j++) add(row, x += 2, y);
+            // Add layer particles
+            this.addParticle(layer, x += 2, y);
+            for (let j = 0; j < i - 1; j++) this.addParticle(layer, ++x, ++y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, --x, ++y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, x -= 2, y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, --x, --y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, ++x, --y);
+            for (let j = 0; j < i; j++) this.addParticle(layer, x += 2, y);
         }
     }
 
-    function handleTick(progress: number) {
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            const alpha = Math.abs(Math.sin(PI_M2 * (progress - i / rows.length)));
+    addParticle = (layer: PIXI.Container, x: number, y: number) => {
+        const { size, spacing } = this.state;
 
-            for (let j = 0; j < row.length; j++) {
-                let hex = row[j];
-                hex.alpha = alpha;
+        // Get position
+        x = (x - 2.625) * ((size.value * 0.4330125) + spacing.value) + this.size / 2;
+        y = (y - 0.55) * ((size.value * 0.75) + spacing.value) + this.size / 2;
+
+        if (x <= -this.size || x >= this.size || y < -this.size || y >= this.size) {
+            return;
+        }
+
+        // Get particle
+        let particle = this.particles.find(particle => !particle.parent);
+        if (!particle) {
+            particle = PIXI.Sprite.from(this.particleTexture);
+            this.particles.push(particle);
+        }
+        
+        // Update particle
+        layer.addChild(particle);
+        particle.position.x = x;
+        particle.position.y = y;
+        particle.scale.set(size.value / this.particleSize);
+    };
+
+    handleTick = (progress: number) => {
+        const { speed } = this.state;
+
+        for (let i = 0; i < this.container.children.length; i++) {
+            const layer = this.container.children[i];
+            const alpha = Math.abs(Math.sin(PI_M2 * (progress * speed.value - i / this.container.children.length)));
+
+            for (let j = 0; j < layer.children.length; j++) {
+                const particle = layer.children[j];
+                particle.alpha = alpha;
             }
         }
     }
 
-    return <PixiPlayer
-        duration={5}
-        onInit={handleInit}
-        onTick={handleTick}
-    />;
+    render() {
+        return <>
+            <ExperimentControls
+                items={this.state}
+                onChange={items => this.setState(items)}
+            />
+            <PixiPlayer
+                duration={5}
+                onInit={this.handleInit}
+                onTick={this.handleTick}
+            />
+        </>;
+    }
 
 }
