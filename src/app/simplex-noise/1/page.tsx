@@ -1,59 +1,92 @@
 'use client';
-import { PixiPlayer } from '@/components';
+import { ExperimentControls, PixiPlayer } from '@/components';
 import { PI_M2 } from '@/setup';
 import * as PIXI from 'pixi.js';
+import React from 'react';
 import { createNoise3D } from 'simplex-noise';
 
-export default function SimplexNoise1() {
 
-    const container = new PIXI.Container();
-    const noise3D = createNoise3D();
-    const size = 640;
-    
-    const center = size / 2;
+export default class SimplexNoise1 extends React.Component<any, ExperimentControlItems> {
 
-    function handleInit(app: PIXI.Application) {
-        app.stage.addChild(container);
+    center = 320;
+    container = new PIXI.Container();
+    noise3D = createNoise3D();
+    particles: PIXI.Sprite[] = [];
+    size = 640;
+
+    particleTexture: PIXI.Texture;
+
+    state = {
+        opacity: { min: 0, max: 1, value: 0.1 },
+        noise: { min: 0, max: 10, value: 1 },
+        particles: { min: 1, max: 2000, step: 1, value: 1000 },
+    };
+
+    handleInit = (app: PIXI.Application) => {
+        app.stage.addChild(this.container);
 
         // Get particle texture
         const particleShape = new PIXI.Graphics()
             .circle(0, 0, 1)
-            .fill({
-                alpha: 0.1,
-                color: 0xFFFFFF,
-            });
-        const particleTexture = app.renderer.generateTexture(particleShape);
+            .fill(0xFFFFFF);
+        this.particleTexture = app.renderer.generateTexture(particleShape);
 
-        // Add to container
-        for (let i = 0; i < 2000; i++) {
-            const particle = PIXI.Sprite.from(particleTexture);
-            container.addChild(particle);
+        // Trigger state change
+        this.setState({});
+    }
+
+    componentDidUpdate() {
+        const { opacity, particles } = this.state;
+        this.container.alpha = opacity.value;
+
+        // Create missing particles
+        for (let i = this.particles.length; i < particles.value; i++) {
+            const particle = PIXI.Sprite.from(this.particleTexture);
+            this.particles.push(particle);
+        }
+
+        // Remove particles from container
+        this.particles.forEach(particle => particle.removeFromParent());
+
+        // Add visible particles to container
+        for (let i = 0; i < particles.value; i++) {
+            const particle = this.particles[i];
+            this.container.addChild(particle);
         }
     }
 
-    function handleTick(progress: number) {
-        for (let i = 0; i < container.children.length; i++) {
+    handleTick = (progress: number) => {
+        const { noise } = this.state;
+
+        for (let i = 0; i < this.container.children.length; i++) {
             // Get particle
-            const particle = container.children[i];
-            const n = i / container.children.length;
+            const particle = this.container.children[i];
+            const n = i / this.container.children.length;
 
             // Get noise
             const noiseAlpha = PI_M2 * (n + progress);
-            const noiseX = Math.cos(noiseAlpha);
-            const noiseY = Math.sin(noiseAlpha);
-            const noise1 = noise3D(noiseX, noiseY, n) * 50;
-            const noise2 = noise3D(noiseX + 2, noiseY, n) * 50;
+            const noiseX = Math.cos(noiseAlpha * noise.value);
+            const noiseY = Math.sin(noiseAlpha * noise.value);
+            const noise1 = this.noise3D(noiseX, noiseY, n) * 50;
+            const noise2 = this.noise3D(noiseX + 2, noiseY, n) * 50;
 
             // Update particle
-            particle.x = window.innerWidth * (i / container.children.length) + noise1;
-            particle.y = center + noise2;
+            particle.x = this.size * (i / this.container.children.length) + noise1;
+            particle.y = this.center + noise2;
         }
     }
 
-    return <PixiPlayer
-        duration={5}
-        onInit={handleInit}
-        onTick={handleTick}
-    />;
-
+    render() {
+        return <>
+            <ExperimentControls
+                items={this.state}
+                onChange={items => this.setState(items)}
+            />
+            <PixiPlayer
+                duration={5}
+                onInit={this.handleInit}
+                onTick={this.handleTick}
+            />
+        </>;
+    }
 }
