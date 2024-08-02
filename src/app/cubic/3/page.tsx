@@ -13,6 +13,7 @@ export default class Cubic3 extends React.Component<any, ExperimentControlItems>
     particles: Particle[] = [];
 
     state = {
+        // TODO: Add layers
         delay: { min: 0, max: 2, value: 1 },
         speed: { min: 1, max: 10, step: 1, value: 1 },
     };
