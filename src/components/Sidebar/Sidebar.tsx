@@ -1,6 +1,7 @@
 'use client';
 import { experiments } from '@/setup';
-import { Box, Button, ListItemText, MenuItem } from '@mui/material';
+import { ContactPage, GitHub } from '@mui/icons-material';
+import { Box, Button, IconButton, ListItemText, MenuItem } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
 
@@ -13,9 +14,19 @@ export default function Sidebar() {
     }, []);
 
     return <Box bgcolor="grey.900" component="nav" display="flex" flexDirection="column" height="100vh">
-        <Button color="inherit" href="/" size="large" variant="contained">
-            Experiments
-        </Button>
+        <Box bgcolor="grey.800" display="flex" justifyContent="space-between">
+            <Button color="inherit" disableElevation href="/" variant="contained">
+                Experiments
+            </Button>
+            <Box>
+                <IconButton color="inherit" href="https://github.com/Emroni/experimental" target="_blank">
+                    <ContactPage />
+                </IconButton>
+                <IconButton color="inherit" href="https://github.com/Emroni/experimental" target="_blank">
+                    <GitHub />
+                </IconButton>
+            </Box>
+        </Box>
         <Box flex={1} sx={{ overflowY: 'auto' }}>
             {experiments.map((experiment, index) => (
                 <MenuItem
