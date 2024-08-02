@@ -14,7 +14,7 @@ export default function Sidebar() {
 
     return <Box bgcolor="grey.900" component="nav" display="flex" flexDirection="column" height="100vh">
         <Button color="inherit" href="/" size="large" variant="contained">
-            Experimental
+            Experiments
         </Button>
         <Box flex={1} sx={{ overflowY: 'auto' }}>
             {experiments.map((experiment, index) => (
