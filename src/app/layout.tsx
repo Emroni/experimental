@@ -1,4 +1,4 @@
-import { Analytics, Sidebar } from '@/components';
+import { Analytics, ExperimentSource, Sidebar } from '@/components';
 import { ThemeProvider } from '@/contexts/Theme/Theme';
 import { Box } from '@mui/material';
 import type { Metadata } from 'next';
@@ -32,6 +32,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <Box component="main" display="flex" flex={1} flexDirection="column" overflow="hidden" position="relative">
                     {children}
                 </Box>
+                <ExperimentSource />
             </Box>
         </ThemeProvider>
     </html>;
