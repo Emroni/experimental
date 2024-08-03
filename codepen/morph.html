@@ -1,0 +1,239 @@
+<style>
+    body {
+        margin: 0;
+    }
+
+    canvas {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 100vh;
+    }
+</style>
+
+<script>
+    const PI2 = Math.PI * 2;
+    const $window = $(window);
+
+    var camera, scene, renderer, material, time = 0;
+    var from, to, particles = [];
+
+    var gui, controls = {
+        particles: 1000,
+        speed: 0.5,
+        colorize: false,
+        morph: 0
+    };
+
+    $(function () {
+        camera = new THREE.PerspectiveCamera(75, 1, 1, 5000);
+        camera.position.z = 1000;
+        scene = new THREE.Scene();
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.append(renderer.domElement);
+        new THREE.OrbitControls(camera, renderer.domElement);
+
+        material = new THREE.SpriteMaterial({
+            color: new THREE.Color('white')
+        });
+
+        gui = new dat.GUI();
+        gui.add(controls, 'particles', 100, 10000).step(100).onChange(populate);
+        gui.add(controls, 'speed', -1, 1).step(0.01);
+        gui.add(controls, 'colorize');
+        gui.add(controls, 'morph', 0, 1).step(0.001).listen().onChange(morph);
+        gui.close();
+
+        $window.on('resize', resize);
+        populate();
+        render();
+
+        TweenMax.to(controls, 4, {
+            morph: 1,
+            delay: 1,
+            onUpdate: morph,
+            ease: Sine.easeInOut,
+            yoyo: true,
+            repeat: 1,
+            repeatDelay: 1
+        });
+    });
+
+
+    function populate() {
+        let i, particle;
+
+        if (scene.children.length > controls.particles) {
+            while (scene.children.length > controls.particles) {
+                scene.remove(scene.children[scene.children.length - 1]);
+            }
+
+        } else {
+            for (i = particles.length; i < controls.particles; i++) {
+                particle = new THREE.Object3D();
+                particles.push(particle);
+
+                particle.container = new THREE.Object3D();
+                particle.add(particle.container);
+
+                particle.shape = new THREE.Sprite(material.clone());
+                particle.shape.scale.set(5, 5);
+                particle.container.add(particle.shape);
+
+                particle.ease = 0.1 + Math.random() * 0.1;
+
+                particle.target = {
+                    position: new THREE.Vector3(),
+                    rotation: new THREE.Vector3(),
+                    shapePosition: new THREE.Vector3(),
+                    scale: 1
+                };
+            }
+
+            for (i = scene.children.length; i < controls.particles; i++) {
+                scene.add(particles[i]);
+            }
+        }
+
+        resize();
+
+        for (i = 0; i < scene.children.length; i++) {
+            particle = scene.children[i];
+            particle.position.set(
+                particle.target.position.x,
+                particle.target.position.y,
+                particle.target.position.z
+            );
+            particle.rotation.z = particle.target.rotation.z;
+            particle.container.rotation.y = particle.target.rotation.y;
+            particle.shape.position.set(
+                particle.target.shapePosition.x,
+                particle.target.shapePosition.y,
+                particle.target.shapePosition.z
+            );
+            particle.shape.scale.set(particle.target.scale, particle.target.scale);
+        }
+    }
+
+    function colorize() {
+        if (!controls.colorize) {
+            for (let i = 0; i < scene.children.length; i++) {
+                scene.children[i].shape.material.color.set('white');
+            }
+        }
+    }
+
+    function resize() {
+        camera.aspect = self.innerWidth / self.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(self.innerWidth, self.innerHeight);
+
+        let i, n, r, y;
+        let radius = Math.min(self.innerWidth, self.innerHeight) * 0.5;
+        let wide = Math.ceil((5 + scene.children.length / 500) / 2) * 2 + 1;
+
+        from = [];
+        to = [];
+
+        for (i = 0; i < scene.children.length; i++) {
+            n = 2 / scene.children.length;
+            y = i * n - 1 + n / 2;
+            r = Math.sqrt(1 - y * y) * radius;
+            n = i % scene.children.length * Math.PI * (3 - Math.sqrt(5));
+            from.push({
+                position: new THREE.Vector3(),
+                rotation: new THREE.Vector3(0, 0.004, 0),
+                shapePosition: new THREE.Vector3(
+                    Math.cos(n) * r,
+                    y * radius,
+                    Math.sin(n) * r
+                ),
+                scale: Math.min(6, 10000 / scene.children.length)
+            });
+
+            n = (Math.floor(i / wide) / (scene.children.length / wide)) * PI2 * 2;
+            r = (i % wide - wide / 2) * (radius / 40);
+            to.push({
+                position: new THREE.Vector3(
+                    Math.sin(n) * radius,
+                    Math.floor((i - scene.children.length / 2) / wide) / (scene.children.length / wide) * radius * (wide / 5),
+                    Math.cos(n) * radius
+                ),
+                rotation: new THREE.Vector3(0, 0.04, Math.PI * 0.5),
+                shapePosition: new THREE.Vector3(
+                    Math.sin(n) * r,
+                    0,
+                    Math.cos(n) * r
+                ),
+                scale: (Math.abs(i % wide - wide / 2) / (wide / 2) + 1) * (30 / wide)
+            });
+        }
+
+        morph();
+    }
+
+    function morph() {
+        let s, p, f, t, i, particle;
+        for (i = 0; i < scene.children.length; i++) {
+            particle = scene.children[i];
+            f = from[i];
+            t = to[i];
+
+            particle.target.position.set(
+                f.position.x + (t.position.x - f.position.x) * controls.morph,
+                f.position.y + (t.position.y - f.position.y) * controls.morph,
+                f.position.z + (t.position.z - f.position.z) * controls.morph
+            );
+
+            particle.target.rotation.set(
+                0,
+                f.rotation.y + (t.rotation.y - f.rotation.y) * controls.morph,
+                f.rotation.z + (t.rotation.z - f.rotation.z) * controls.morph
+            );
+
+            particle.target.shapePosition.set(
+                f.shapePosition.x + (t.shapePosition.x - f.shapePosition.x) * controls.morph,
+                f.shapePosition.y + (t.shapePosition.y - f.shapePosition.y) * controls.morph,
+                f.shapePosition.z + (t.shapePosition.z - f.shapePosition.z) * controls.morph
+            );
+
+            particle.target.scale = f.scale + (t.scale - f.scale) * controls.morph;
+        }
+    }
+
+    function render() {
+        requestAnimationFrame(render);
+
+        let i, particle;
+        for (i = 0; i < scene.children.length; i++) {
+            particle = scene.children[i];
+            particle.position.x += (particle.target.position.x - particle.position.x) * particle.ease;
+            particle.position.y += (particle.target.position.y - particle.position.y) * particle.ease;
+            particle.position.z += (particle.target.position.z - particle.position.z) * particle.ease;
+            particle.rotation.z += (particle.target.rotation.z - particle.rotation.z) * particle.ease;
+
+            particle.container.rotation.y = (particle.container.rotation.y + particle.target.rotation.y * controls.speed) % PI2;
+
+            particle.shape.position.x += (particle.target.shapePosition.x - particle.shape.position.x) * particle.ease;
+            particle.shape.position.y += (particle.target.shapePosition.y - particle.shape.position.y) * particle.ease;
+            particle.shape.position.z += (particle.target.shapePosition.z - particle.shape.position.z) * particle.ease;
+
+            particle.shape.scale.x = particle.shape.scale.y += (particle.target.scale - particle.shape.scale.x) * particle.ease;
+        }
+
+        if (controls.colorize) {
+            time = (time + controls.speed * 0.01) % 1;
+            for (i = 0; i < scene.children.length; i++) {
+                scene.children[i].shape.material.color.setHSL(
+                    time + (i / scene.children.length) % 1,
+                    1,
+                    1 - controls.colorize * 0.5
+                );
+            }
+        }
+
+        renderer.render(scene, camera);
+    }
+</script>

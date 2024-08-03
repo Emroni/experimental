@@ -1,0 +1,157 @@
+<div class="loader">
+    <div class="loader-bar"></div>
+</div>
+
+<style>
+    html, body {
+    background-color: #000;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.loader {
+    background-color: #207d93;
+    position: absolute;
+    left: 25%;
+    top: 50%;
+    width: 50%;
+}
+
+.loader-bar {
+    background-color: #5DBCD2;
+    height: 4px;
+    width: 0;
+}
+
+canvas {
+    margin: 0;
+}
+</style>
+
+<script>
+    let scene, camera, renderer, container, fov, points;
+let rotation = new THREE.Vector2();
+let gui, controls = {
+    color: 0x5DBCD2,
+    ease: 5,
+    size: 1,
+    spread: 30,
+};
+
+let loader = $('.loader-bar');
+$.ajax({
+    url: 'https://dl.dropboxusercontent.com/s/fdl8fk6e29k6aoe/face.json?dl=1',
+    dataType: 'json',
+    xhr: () => {
+        let xhr = new window.XMLHttpRequest();
+        xhr.addEventListener('progress', e => {
+            loader.css('width', (e.loaded / 3899536 * 100) + '%');
+        });
+        return xhr;
+    },
+    success: data => {
+        loader.parent().remove();
+        init(data);
+    }
+});
+
+function init(data) {
+    gui = new dat.GUI();
+    gui.addColor(controls, 'color').onChange(change);
+    gui.add(controls, 'ease', 0, 20).step(1).onChange(change);
+    gui.add(controls, 'size', 0.1, 3).step(0.01).onChange(change);
+    gui.add(controls, 'spread', 1, 100).step(1).onChange(build);
+    gui.close();
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    fov = Math.tan(camera.fov * (Math.PI / 180) / 2) * 2;
+    
+    renderer = new THREE.WebGLRenderer();
+    renderer.setPixelRatio(window.devicePixelRatio);
+    document.body.appendChild(renderer.domElement);
+    
+    container = new THREE.Group();
+    scene.add(container);
+    
+    points = [];
+    let i;
+    for (i=0; i<data.vertices.length; i+=3) {
+        points.push([data.vertices[i], data.vertices[i+1], data.vertices[i+2]]);
+    }
+    
+    window.addEventListener('mousemove', move);
+    window.addEventListener('resize', resize);
+    resize();
+    build();
+    change();
+    render();
+}
+
+function resize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.position.z = window.innerHeight / fov;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    container.scale.setScalar(Math.min(1000, window.innerWidth, window.innerHeight) / 4);
+}
+
+function build() {
+    while (container.children.length) {
+        container.remove(container.children.pop());
+    }
+    
+    let i, collections = [];
+    for (i=0; i<controls.spread; i++) {
+        collections.push([]);
+    }
+    
+    let c, p;
+    for (i=0; i<points.length; i++) {
+        c = collections[Math.floor(Math.random() * collections.length)];
+        p = points[i];
+        c.push(p[0], p[1], p[2]);
+    }
+    
+    let material = new THREE.PointsMaterial();
+    let collection, geometry;
+    for (i=0; i<collections.length; i++) {
+        geometry = new THREE.BufferGeometry();
+        geometry.addAttribute('position', new THREE.Float32BufferAttribute(collections[i], 3));
+        collection = new THREE.Points(geometry, material);
+        container.add(collection);
+    } 
+    
+    change();
+}
+
+function change() {
+    let i, c;
+    for (i=0; i<container.children.length; i++) {
+        c = container.children[i];
+        c.material.size = controls.size;
+        c.material.color.set(controls.color);
+        c.ease = controls.ease ? (((i+1) / container.children.length) / controls.ease) : 1;
+    }
+}
+
+function move(e) {
+   rotation.set(e.pageY / window.innerHeight - 0.5, e.pageX / window.innerWidth - 0.5);
+}
+
+function render(){
+    requestAnimationFrame(render);
+    
+    let i, c;
+    for (i=0; i<container.children.length; i++) {
+        c = container.children[i];
+        c.rotation.x += (rotation.x - c.rotation.x) * c.ease;
+        c.rotation.y += (rotation.y - c.rotation.y) * c.ease;
+    }
+    
+    renderer.render(scene, camera);
+}
+</script>

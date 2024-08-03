@@ -1,0 +1,289 @@
+<style>
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    canvas {
+        display: block;
+    }
+</style>
+
+<script>
+    const guiw = new GUIW({
+        ease: [0.05, 0.01, 1, 0.01],
+        colors: {
+            primary: [0x000000, 'color'],
+            secondary: [0xFFFFFF, 'color'],
+        },
+        flakes: {
+            amount: [40, 0, 300],
+            angle: [-0.5, -1, 1, 0.01],
+            blur: [2, 0, 3],
+            scale: [1, 0.1, 2, 0.1],
+            velocity: [2, -100, 100, 0.01],
+        },
+        mountains: {
+            blur: [5, 0, 30],
+            curve: [1, -10, 10, 0.01],
+            elevation: [100, 10, 300],
+            layers: 10,
+            position: [0.5, 0, 2, 0.01],
+            spread: [0.5, 0, 5, 0.01],
+            steps: 20,
+            sway: 50,
+        },
+        umbrella: {
+            blur: [15, 0, 30],
+            position: [0.2, 0, 1, 0.01],
+            rotation: [0.1, 0, 1, 0.01],
+            scale: [1, 0.1, 2, 0.1],
+            velocity: [1, 0, 10, 0.01],
+            sway: 50,
+        },
+    }, change);
+
+    const app = new PIXI.Application({
+        width: window.innerWidth,
+        height: window.innerHeight,
+        antialias: true,
+        autoResize: true,
+        resolution: devicePixelRatio,
+        backgroundColor: 0xFFFFFF,
+    });
+    document.body.appendChild(app.view);
+
+    const time = performance.now();
+    const cursor = {
+        x: 0,
+        y: 0,
+    };
+
+    const flakes = [];
+    const mountains = [];
+    const umbrella = new PIXI.Graphics();
+
+    window.onload = () => {
+        for (let i = 0; i < 300; i++) {
+            const flake = new PIXI.Graphics();
+            flakes.push(flake);
+            app.stage.addChild(flake);
+        }
+
+        for (let i = 0; i < 100; i++) {
+            const mountain = new PIXI.Graphics();
+            mountains.push(mountain);
+            app.stage.addChild(mountain);
+        }
+
+        app.stage.addChild(umbrella);
+        umbrella.x = window.innerWidth / 2;
+        umbrella.y = window.innerHeight * guiw.umbrella.position;
+
+        window.addEventListener('mousemove', moveCursor);
+        window.addEventListener('touchstart', moveCursor);
+        window.addEventListener('touchmove', moveCursor);
+        window.addEventListener('resize', change);
+        change();
+
+        PIXI.ticker.shared.add(tick);
+    };
+
+    function change(value, key, folder) {
+        const force = !key || folder === 'colors';
+
+        if (force) {
+            app.renderer.resize(window.innerWidth, window.innerHeight);
+            app.renderer.backgroundColor = guiw.colors.secondary;
+        }
+
+        if (force || (folder === 'flakes' && key !== 'angle' && key !== 'velocity')) {
+            drawFlakes();
+        }
+
+        if (force || folder === 'mountains') {
+            drawMountains();
+        }
+
+        if (force || folder === 'umbrella') {
+            drawUmbrella();
+        }
+    }
+
+    function drawFlakes() {
+        const { primary } = guiw.colors;
+        const { amount, blur, scale, velocity } = guiw.flakes;
+
+        for (let i = 0; i < flakes.length; i++) {
+            const flake = flakes[i];
+
+            if (i >= amount) {
+                flake.visible = false;
+                continue;
+            }
+
+            const indexFraction = 1 - i / amount / 3;
+
+            flake.visible = true;
+            flake.scale.x = flake.scale.y = indexFraction;
+            flake.y = velocity < 0 ? 0 : window.innerHeight;
+
+            if (blur) {
+                flake.filters = [
+                    new PIXI.filters.BlurFilter(Math.ceil(Math.abs(blur * indexFraction)), 2),
+                ];
+            }
+
+            flake.cacheAsBitmap = false;
+            flake.clear();
+            flake.beginFill(primary);
+            flake.drawCircle(0, 0, scale * indexFraction * 3);
+            flake.cacheAsBitmap = true;
+        }
+    }
+
+    function drawMountains() {
+        const { innerWidth, innerHeight } = window;
+        const { primary } = guiw.colors;
+        const { blur, curve, elevation, layers, position, spread, steps } = guiw.mountains;
+
+        const curveHeight = innerHeight * curve;
+        const positionHeight = innerHeight * position;
+
+        for (let i = 0; i < mountains.length; i++) {
+            const mountain = mountains[i];
+
+            if (i >= layers) {
+                mountain.visible = false;
+                continue;
+            }
+
+            const indexFraction = 1 - i / layers;
+            const offsetY = innerHeight * (position - spread / 2 + (spread * indexFraction));
+            const stepWidth = Math.ceil(innerWidth / (steps * 0.5 * Math.random() + steps * 0.5));
+            const boundLeft = -stepWidth * 2;
+            const boundRight = innerWidth + stepWidth * 2;
+            const boundBottom = innerHeight * 2;
+
+            mountain.visible = true;
+            mountain.cacheAsBitmap = false;
+
+            if (blur) {
+                mountain.filters = [
+                    new PIXI.filters.BlurFilter(Math.ceil(Math.abs(blur * (indexFraction - 0.2))), 1),
+                ];
+            }
+
+            mountain.clear();
+            mountain.beginFill(primary, indexFraction);
+            mountain.moveTo(boundLeft, boundBottom);
+            mountain.lineTo(boundLeft, positionHeight);
+
+            for (let x = boundLeft; x <= boundRight; x += stepWidth) {
+                const y = curveHeight * (1 - Math.pow(x / innerWidth - 0.5, 2)) + (elevation * Math.random()) + offsetY - curveHeight;
+                mountain.lineTo(x, y);
+            }
+
+            mountain.lineTo(boundRight, positionHeight);
+            mountain.lineTo(boundRight, boundBottom);
+            mountain.endFill();
+
+            mountain.cacheAsBitmap = true;
+        }
+
+    }
+
+    function drawUmbrella() {
+        const { primary, secondary } = guiw.colors;
+        const { blur } = guiw.umbrella;
+
+        umbrella.cacheAsBitmap = false;
+        umbrella.scale.x = umbrella.scale.y = guiw.umbrella.scale / 4;
+
+        umbrella.filters = blur ? [
+            new PIXI.filters.GlowFilter(blur, 1, 0, primary),
+        ] : null;
+
+        umbrella.clear();
+        umbrella.beginFill(primary);
+        umbrella.arc(0, 0, 200, 0, Math.PI, true);
+        for (let i = 0; i < 6; i++) {
+            umbrella.arc(-200 + (i + 0.5) * (200 / 3), 0, 200 / 6, Math.PI, 0);
+        }
+        umbrella.endFill();
+
+        umbrella.beginFill(primary);
+        umbrella.drawRect(-4, -210, 8, 330);
+        umbrella.drawRect(-6, 120, 12, 20);
+        umbrella.endFill();
+
+        umbrella.lineStyle(12, primary);
+        umbrella.arc(28, 140, 28, 0.2, Math.PI);
+
+        umbrella.cacheAsBitmap = true;
+    }
+
+    function moveCursor(e) {
+        if (e.touches) {
+            e = e.touches[0];
+        }
+        cursor.x = 0.5 - e.pageX / window.innerWidth;
+        cursor.y = 0.5 - e.pageY / window.innerHeight;
+    }
+
+    function tick() {
+        const distance = (window.innerWidth + window.innerHeight) / 10;
+        const elapsed = (performance.now() - time) / 10000;
+
+        moveFlakes();
+        moveMountains(distance, elapsed);
+        moveUmbrella(distance / 3, elapsed);
+    }
+
+    function moveFlakes() {
+        const { amount, angle, velocity } = guiw.flakes;
+        const dX = Math.sin(angle) * velocity;
+        const dY = Math.cos(angle) * velocity;
+
+        for (let i = 0; i < amount; i++) {
+            const flake = flakes[i];
+            flake.x += dX;
+            flake.y += dY;
+
+            if (velocity > 0) {
+                if (flake.y > window.innerHeight) {
+                    flake.x = window.innerWidth * (-1 + Math.random() * 3);
+                    flake.y = -window.innerHeight * Math.random();
+                }
+            } else if (flake.y < 0) {
+                flake.x = window.innerWidth * (-1 + Math.random() * 3);
+                flake.y = window.innerHeight * (1 + Math.random());
+            }
+        }
+    }
+
+    function moveMountains(distance, time) {
+        const { layers, spread, sway } = guiw.mountains;
+        const swayX = sway * Math.sin(time);
+        const swayY = sway * Math.sin(time * 2);
+
+        for (let i = 0; i < layers; i++) {
+            const mountain = mountains[i];
+            const index = 0.8 - i / layers;
+            mountain.x += (index * distance * cursor.x + swayX * index - mountain.x) * guiw.ease;
+            mountain.y += (index * distance * cursor.y + swayY * index - mountain.y) * guiw.ease;
+        }
+    }
+
+    function moveUmbrella(distance, time) {
+        const { position, rotation, sway, velocity } = guiw.umbrella;
+        const move = time * velocity;
+
+        umbrella.x += ((distance * cursor.x + sway * Math.sin(move * 3) + window.innerWidth / 2) - umbrella.x) * guiw.ease;
+        umbrella.y += ((distance * cursor.y + sway * Math.cos(move * 4) + window.innerHeight * position) - umbrella.y) * guiw.ease;
+        umbrella.rotation = Math.cos(move * 10) * rotation;
+    }
+</script>

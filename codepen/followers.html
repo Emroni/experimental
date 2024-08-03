@@ -1,0 +1,101 @@
+<style>
+    body {
+        background-color: #000;
+    }
+
+    .follower {
+        background-color: #000;
+        position: absolute;
+        transition: transform 0.1s ease-in-out;
+    }
+</style>
+<script>
+    console.clear();
+
+    let controls = {
+        followers: 200,
+        size: 50,
+        delay: 0.001,
+    };
+    let gui = new dat.GUI();
+    gui.add(controls, 'followers', 1, 1000).step(1).onChange(change);
+    gui.add(controls, 'size', 10, 100).step(1).onChange(change);
+    gui.add(controls, 'delay', 0, 0.01).step(0.0001).onChange(change);
+    gui.close();
+
+    let target = {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+    };
+    window.onmousemove = e => {
+        target.x = e.pageX - (e.pageX % controls.size);
+        target.y = e.pageY - (e.pageY % controls.size);
+    };
+
+    let followers = [];
+
+    function change() {
+        let i, d, f;
+
+        while (followers.length) {
+            f = followers.pop();
+            document.body.removeChild(f.element);
+        }
+
+        for (i = 0; i < controls.followers; i++) {
+            d = i * controls.delay;
+
+            f = document.createElement('span');
+            f.className = 'follower';
+            f.style.backgroundColor = `hsl(${Math.floor((i / controls.followers) * 360)}, 100%, 50%)`;
+            f.style.width = controls.size + 'px';
+            f.style.height = f.style.width;
+            f.style.transitionDelay = d + 's';
+            document.body.appendChild(f);
+
+            f = {
+                element: f,
+                delay: d,
+                x: 0,
+                y: 0,
+            };
+
+            followers.push(f);
+            move(f);
+        }
+    }
+
+    function move(follower) {
+        if (follower.timeout) {
+            return;
+        }
+
+        let d = {
+            x: target.x - follower.x,
+            y: target.y - follower.y,
+        };
+
+        if (d.x && d.y) {
+            if (Math.random() < 0.5) {
+                d.x = 0;
+            } else {
+                d.y = 0;
+            }
+        }
+
+        if (d.x) {
+            follower.x += controls.size * (d.x / Math.abs(d.x));
+        } else if (d.y) {
+            follower.y += controls.size * (d.y / Math.abs(d.y));
+        }
+
+        follower.element.style.transform = `translate3d(${follower.x + 'px'}, ${follower.y + 'px'}, 0)`;
+
+        follower.timeout = setTimeout(() => {
+            follower.timeout = null;
+            move(follower);
+        }, 100 + (follower.delay * 1000));
+    }
+
+    change();
+</script>
