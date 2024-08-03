@@ -57,6 +57,9 @@ export default class Cubic3 extends React.Component<any, ExperimentControlItems>
                 }
             }
         }
+
+        // Trigger state change
+        this.setState({});
     }
 
     handleTick = (progress: number) => {
