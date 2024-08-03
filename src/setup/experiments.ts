@@ -43,8 +43,6 @@ const items = [
 ];
 
 const disabled = [
-    'polyhedron/1',
-    'polyhedron/2',
     'kaleidoscope/1',
     'kaleidoscope/2',
     'kaleidoscope/3',
