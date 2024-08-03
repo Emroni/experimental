@@ -19,7 +19,16 @@ export default function Home() {
                     <CardActionArea href={experiment.path}>
                         <Card>
                             <CardMedia image={experiment.image} sx={{ paddingTop: '100%' }} />
-                            <CardHeader subheader={experiment.index} title={experiment.title} />
+                            <CardHeader
+                                subheader={(
+                                    <Box display="flex" gap={1}>
+                                        <Typography>{experiment.index}</Typography>
+                                        <Typography color="grey.700">|</Typography>
+                                        <Typography>{experiment.date}</Typography>
+                                    </Box>
+                                )}
+                                title={experiment.title}
+                            />
                         </Card>
                     </CardActionArea>
                 </Grid>
