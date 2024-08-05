@@ -19,7 +19,7 @@ export default function Sidebar() {
                 Experiments
             </Button>
             <Box>
-                <IconButton color="inherit" href="https://github.com/Emroni/experimental" target="_blank">
+                <IconButton color="inherit" href="https://emrekoc.io" target="_blank">
                     <ContactPage />
                 </IconButton>
                 <IconButton color="inherit" href="https://github.com/Emroni/experimental" target="_blank">

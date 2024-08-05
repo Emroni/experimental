@@ -1,0 +1,137 @@
+<style>
+    html,
+    body {
+        background-color: #000;
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    canvas {
+        margin: 0;
+    }
+</style>
+
+<script>
+    const PI2 = Math.PI * 2;
+
+    let scene, camera, renderer, container, fov, material;
+    let gui, controls = {
+        rings: {
+            amount: 30,
+            segments: 10,
+            radiusInner: 100,
+            radiusOuter: 250,
+            spread: 30,
+        },
+        rotation: {
+            amount: 0.3,
+            speed: 0.01,
+            stagger: 0.1,
+        },
+        scale: {
+            amount: 0.1,
+            speed: 0.01,
+            stagger: 0.1,
+        },
+        color: {
+            saturation: 0.5,
+            lightness: 0.5,
+            speed: 0.01,
+            stagger: 0.1,
+            inverse: true,
+        },
+    };
+    let index = {
+        rotation: 0,
+        scale: 0,
+        color: 0,
+    };
+
+    window.onload = () => {
+        gui = new dat.GUI();
+        let guiRings = gui.addFolder('Rings');
+        guiRings.add(controls.rings, 'amount', 3, 100).step(1).onChange(populate);
+        guiRings.add(controls.rings, 'segments', 3, 10).step(1).onChange(populate);
+        guiRings.add(controls.rings, 'radiusInner', 1, 1000).step(1).onChange(populate);
+        guiRings.add(controls.rings, 'radiusOuter', 1, 1000).step(1).onChange(populate);
+        guiRings.add(controls.rings, 'spread', 1, 1000).step(1).onChange(populate);
+        let guiRotation = gui.addFolder('Rotation');
+        guiRotation.add(controls.rotation, 'amount', 0, PI2).step(0.01);
+        guiRotation.add(controls.rotation, 'speed', 0, 0.1).step(0.001);
+        guiRotation.add(controls.rotation, 'stagger', 0, 1).step(0.0001);
+        let guiScale = gui.addFolder('Scale');
+        guiScale.add(controls.scale, 'amount', 0, PI2).step(0.01);
+        guiScale.add(controls.scale, 'speed', 0, 0.1).step(0.001);
+        guiScale.add(controls.scale, 'stagger', 0, 0.1).step(0.0001);
+        let guiColor = gui.addFolder('Color');
+        guiColor.add(controls.color, 'saturation', 0, 1).step(0.01);
+        guiColor.add(controls.color, 'lightness', 0, 1).step(0.01);
+        guiColor.add(controls.color, 'speed', 0, 0.1).step(0.0001);
+        guiColor.add(controls.color, 'stagger', 0, 1).step(0.0001);
+        guiColor.add(controls.color, 'inverse');
+        gui.close();
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        fov = Math.tan(camera.fov * (Math.PI / 180) / 2) * 2;
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        container = new THREE.Group();
+        scene.add(container);
+
+        material = new THREE.MeshBasicMaterial({
+            color: 0xffff00, side: THREE.DoubleSide
+        });
+
+        window.addEventListener('resize', resize);
+        resize();
+        populate();
+        render();
+    };
+
+    function resize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.position.z = window.innerHeight / fov;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function populate() {
+        while (container.children.length) {
+            container.remove(container.children[0]);
+        }
+
+        let geometry = new THREE.RingGeometry(controls.rings.radiusInner, controls.rings.radiusOuter, controls.rings.segments);
+
+        let i, ring;
+        for (i = 0; i < controls.rings.amount; i++) {
+            ring = new THREE.Mesh(geometry, material.clone());
+            container.add(ring);
+            ring.position.z = (i - (controls.rings.amount / 2)) * controls.rings.spread;
+        }
+    }
+
+    function render() {
+        requestAnimationFrame(render);
+
+        index.rotation = (index.rotation + controls.rotation.speed) % PI2;
+        index.scale = (index.scale + controls.scale.speed) % PI2;
+        index.color = (index.color + controls.color.speed) % 1;
+
+        let i, ring;
+        for (i = 0; i < container.children.length; i++) {
+            ring = container.children[i];
+            ring.rotation.z = Math.sin(index.rotation + (i * controls.rotation.stagger)) * controls.rotation.amount;
+            ring.scale.setScalar(1 + Math.sin(index.scale + (i * controls.scale.stagger)) * controls.scale.amount);
+            ring.material.color.setHSL(index.color + ((controls.color.inverse ? (container.children.length - i - 1) : i) * controls.color.stagger), controls.color.saturation, controls.color.lightness);
+        }
+
+        renderer.render(scene, camera);
+    }
+</script>

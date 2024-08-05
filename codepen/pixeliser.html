@@ -1,0 +1,123 @@
+<canvas></canvas>
+<input type="file">
+
+<style>
+    canvas {
+        width: 100%;
+    }
+
+    input[type="file"] {
+        visibility: hidden;
+    }
+</style>
+
+<script>
+    const PI2 = Math.PI * 2;
+
+    let input, reader, canvas, ctx;
+    let imgCanvas, imgCtx, img;
+    let gui, controls = {
+        size: 5,
+        shape: 'circle',
+        load: () => {
+            input.click();
+        }
+    };
+
+    window.onload = () => {
+        gui = new dat.GUI();
+        gui.add(controls, 'size').step(1).onChange(change);
+        gui.add(controls, 'shape', ['circle', 'square', 'diamond', 'triangle', 'hexagon']).onChange(change);
+        gui.add(controls, 'load').name('Load image');
+        gui.close();
+
+        reader = new FileReader();
+        reader.onload = loaded;
+
+        input = document.getElementsByTagName('input')[0];
+        input.onchange = load;
+
+        canvas = document.getElementsByTagName('canvas')[0];
+        ctx = canvas.getContext('2d');
+
+        imgCanvas = document.createElement('canvas');
+        imgCtx = imgCanvas.getContext('2d');
+
+        img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = change;
+        img.src = 'https://dl.dropboxusercontent.com/s/dwceem6j2x0gcme/starrynight.jpg?dl=1';
+    };
+
+    function load() {
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    function loaded() {
+        img.src = reader.result;
+    }
+
+    function change() {
+        imgCanvas.width = img.width / controls.size;
+        imgCanvas.height = img.height / controls.size;
+        imgCtx.drawImage(img, 0, 0, imgCanvas.width, imgCanvas.height);
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        let i, x, y;
+        for (i = 0; i < 2; i++) {
+            for (y = i; y < imgCanvas.height; y += 2) {
+                for (x = i; x < imgCanvas.width; x += 2) {
+                    draw(x, y);
+                }
+            }
+        }
+
+    }
+
+    function draw(x, y) {
+        let p = imgCtx.getImageData(x, y, 1, 1).data;
+        ctx.fillStyle = `rgb(${p[0]},${p[1]},${p[2]})`;
+        ctx.beginPath();
+
+        x *= controls.size;
+        y *= controls.size;
+        let s = controls.size;
+
+        switch (controls.shape) {
+            case 'circle':
+                ctx.arc(x, y, s, 0, PI2);
+                break;
+            case 'square':
+                s *= 2;
+                ctx.rect(x, y, s, s);
+                break;
+            case 'diamond':
+                s *= 2;
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + s, y + s);
+                ctx.lineTo(x, y + s * 2);
+                ctx.lineTo(x - s, y + s);
+                break;
+            case 'triangle':
+                s *= 2;
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + s, y + s);
+                ctx.lineTo(x - s, y + s);
+                break;
+            case 'hexagon':
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + s, y + s * 0.45);
+                ctx.lineTo(x + s, y + s * 1.55);
+                ctx.lineTo(x, y + s * 2);
+                ctx.lineTo(x - s, y + s * 1.55);
+                ctx.lineTo(x - s, y + s * 0.45);
+                ctx.lineTo(x, y);
+                break;
+        }
+
+        ctx.fill();
+
+    }
+</script>

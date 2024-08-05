@@ -1,0 +1,124 @@
+<style>
+    html,
+    body {
+        background-color: #fff;
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    canvas {
+        margin: 0;
+    }
+</style>
+
+<script>
+    const PI2 = Math.PI * 2;
+
+    let scene, camera, renderer, container, fov, light, ambient;
+    let gui, controls = {
+        color: 0xF22200,
+        ambient: 0.01,
+        arcs: 7,
+        gap: 30,
+        radius: 50,
+        width: 50,
+        side: 'front',
+        speed: 0.003,
+    };
+
+    window.onload = () => {
+        gui = new dat.GUI();
+        gui.addColor(controls, 'color').onChange(change);
+        gui.add(controls, 'ambient', 0, 1).step(0.01).onChange(change);
+        gui.add(controls, 'side', ['front', 'back', 'double']).onChange(change);
+        gui.add(controls, 'arcs', 1, 20).step(1).onChange(populate);
+        gui.add(controls, 'gap', 1, 100).step(1).onChange(populate);
+        gui.add(controls, 'radius', 1, 100).step(1).onChange(populate);
+        gui.add(controls, 'width', 1, 100).step(1).onChange(populate);
+        gui.add(controls, 'speed', 0, 0.03).step(0.0001);
+        gui.close();
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        fov = Math.tan(camera.fov * (Math.PI / 180) / 2) * 2;
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        ambient = new THREE.AmbientLight(controls.color, controls.ambient);
+        scene.add(ambient);
+
+        light = new THREE.PointLight(controls.color, 1, 10000);
+        scene.add(light);
+
+        container = new THREE.Group();
+        scene.add(container);
+        container.rotation.x = Math.PI / 2;
+
+        material = new THREE.MeshPhongMaterial({
+            side: THREE.DoubleSide,
+        });
+
+        window.addEventListener('resize', resize);
+        resize();
+        change();
+        populate();
+        render();
+    };
+
+    function resize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.position.z = window.innerHeight / fov;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function change() {
+        material.side = {
+            'front': THREE.FrontSide,
+            'back': THREE.BackSide,
+            'double': THREE.DoubleSide,
+        }[controls.side];
+
+        ambient.color.set(controls.color);
+        ambient.intensity = controls.ambient;
+
+        light.color.set(controls.color);
+        light.position.z = controls.radius + controls.arcs * controls.gap + 200;
+    }
+
+    function populate() {
+        while (container.children.length) {
+            container.remove(container.children[0]);
+        }
+
+        let r, i, n, p = 0, mesh, geometry, parent = container;
+        for (i = 0; i < controls.arcs; i++) {
+            n = 1 - (i / controls.arcs);
+            r = controls.radius + (controls.arcs - i) * controls.gap;
+            geometry = new THREE.CylinderGeometry(r, r, controls.width, 100 * n, 1, true, 0, PI2 * n);
+            mesh = new THREE.Mesh(geometry, material);
+            mesh.rotation.y = p;
+            mesh.rotation.z = PI2 * Math.random();
+            parent.add(mesh);
+            parent = mesh;
+            p = n;
+        }
+    }
+
+    function render() {
+        requestAnimationFrame(render);
+
+        let i, mesh = container;
+        for (i = 0; i < controls.arcs; i++) {
+            mesh = mesh.children[0];
+            mesh.rotation.z += controls.speed;
+        }
+
+        renderer.render(scene, camera);
+    }
+</script>

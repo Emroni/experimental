@@ -1,0 +1,175 @@
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+
+        &:after {
+            content: "";
+            display: block;
+            margin-top: 50vh;
+            height: 50vh;
+            background-color: #000;
+        }
+    }
+
+    div.dg.ac {
+        z-index: 1;
+    }
+
+    canvas {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+    }
+</style>
+
+<script>
+    const SIZE = 800;
+    const RATIO = 0.68;
+    const SCALE = 1.2;
+    const DURATION = 10;
+
+    var $body = $(document.body);
+    var $window = $(window);
+    var layers = [];
+
+    var gui, controls = {
+        layers: 3,
+        branches: 10,
+        jumps: 10,
+        offset: 0.1,
+        skew: 0.1
+    };
+
+    $(function () {
+        gui = new dat.GUI();
+        gui.add(controls, 'layers', 2, 20).step(1).onChange(populate);
+        gui.add(controls, 'branches', 1, 100).step(1).onChange(change);
+        gui.add(controls, 'jumps', 1, 20).step(1).onChange(change);
+        gui.add(controls, 'offset', 0, 0.5).step(0.001).onChange(change);
+        gui.add(controls, 'skew', 0, 0.5).step(0.001).onChange(change);
+        gui.close();
+
+        $window.on('resize', resize);
+        populate();
+    });
+
+    function populate() {
+        let i, layer;
+
+        for (i = 0; i < layers.length; i++) {
+            layers[i].toggle(i < controls.layers);
+        }
+
+        for (i = layers.length; i < controls.layers; i++) {
+            layers.push(new Layer(i));
+        }
+
+        resize();
+    }
+
+    function resize() {
+        let i, scale = Math.min($window.width() / (SIZE * RATIO), $window.height() / SIZE) * SCALE;
+        for (i = 0; i < layers.length; i++) {
+            layers[i].resize(scale);
+        }
+    }
+
+    function change() {
+        for (let i = 0; i < layers.length; i++) {
+            layers[i].change();
+        }
+    }
+
+
+    class Layer {
+        constructor(index) {
+            this.index = index;
+            this.visible = true;
+
+            this.canvas = document.createElement('canvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.element = $(this.canvas);
+            $body.append(this.element);
+
+            this.canvas.height = SIZE;
+            this.canvas.width = SIZE * RATIO;
+
+            this.ctx.lineWidth = 1;
+            this.ctx.lineCap = 'round';
+
+            this.change();
+        }
+
+        toggle(visible) {
+            if (this.visible != visible) {
+                this.visible = visible;
+                this.element.toggle(this.visible);
+
+                this.change();
+            }
+        }
+
+        resize(scale) {
+            this.element.css('transform', `translate3d(-50%, -50%, 0) scale(${scale})`);
+        }
+
+        change() {
+            if (this.visible) {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                for (let i = 0; i < controls.branches; i++) {
+                    this.branch();
+                }
+
+                let duration = DURATION / 3 * 2;
+                let delay = DURATION / 3;
+                let delayStart = (this.index / controls.layers) * (DURATION / 3);
+
+                TweenLite.set(this.canvas, { opacity: 0 });
+                this.timeline = new TimelineMax({ delay: delayStart, repeat: -1, repeatDelay: delay });
+                this.timeline.add(TweenLite.to(this.canvas, duration / 2, { opacity: 1 }));
+                this.timeline.add(TweenLite.to(this.canvas, duration / 2, { opacity: 0 }));
+
+            } else if (this.timeline) {
+                this.timeline.kill(true);
+            }
+        }
+
+        draw(canvas, ctx) {
+            for (let i = 0; i < controls.branches * 2; i++) {
+                this.branch(canvas, ctx);
+            }
+        }
+
+        branch() {
+            let radius = this.canvas.height * 0.4;
+            let length = radius / controls.jumps;
+            let jumps = Math.round((0.5 + Math.random() * 0.5) * controls.jumps);
+
+            let hor = (Math.random() < 0.5 ? -1 : 1) * length;
+            let ver = (Math.random() < 0.5 ? -1 : 1) * length;
+            let start = (ver < 0 ? -1 : 1) * radius / Math.max(8, controls.jumps);
+            var angle = (1 - controls.skew) * (Math.PI * 0.5);
+
+            let x = this.canvas.width / 2;
+            let y = this.canvas.height / 2 - start;
+
+            this.ctx.strokeStyle = ver > 0 ? '#000' : '#FFF';
+            this.ctx.beginPath();
+            this.ctx.moveTo(x + (Math.random() - 0.5) * 2 * start, y + start);
+            this.ctx.lineTo(x, y);
+
+            let i, n, o;
+            for (i = 0; i < jumps; i++) {
+                n = Math.random() < 0.7 ? 0 : ((0.5 + Math.round(Math.random()) / 2) * angle);
+                o = (1 - controls.offset) + Math.random() * controls.offset;
+                x += Math.sin(n) * hor * o * 1.5;
+                y -= Math.cos(n) * ver * o;
+                this.ctx.lineTo(x, y);
+            }
+
+            this.ctx.stroke();
+        }
+    }
+</script>

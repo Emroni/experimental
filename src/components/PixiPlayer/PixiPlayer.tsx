@@ -85,7 +85,7 @@ export default class PixiPlayer extends Component<PixiPlayerProps, PixiPlayerSta
 
     handleTicker = () => {
         const { duration, startTime } = this.state;
-        
+
         // Update progress
         const progress = (((performance.now() / 1000) - startTime) / duration) % 1;
         this.setState({
@@ -93,7 +93,7 @@ export default class PixiPlayer extends Component<PixiPlayerProps, PixiPlayerSta
         });
 
         // Call tick
-        this.props.onTick(progress);
+        this.props.onTick?.(progress);
     }
 
     handleResize = () => {
@@ -135,12 +135,14 @@ export default class PixiPlayer extends Component<PixiPlayerProps, PixiPlayerSta
             <Box flex={1} padding={3}>
                 <Box height="100%" position="relative" ref={this.canvasContainerRef} />
             </Box>
-            <PlayerControls
-                playing={this.state.playing}
-                progress={this.state.progress}
-                onProgressChange={this.handleProgressChange}
-                onToggle={this.togglePlaying}
-            />
+            {!!this.props.onTick && (
+                <PlayerControls
+                    playing={this.state.playing}
+                    progress={this.state.progress}
+                    onProgressChange={this.handleProgressChange}
+                    onToggle={this.togglePlaying}
+                />
+            )}
         </>;
     }
 

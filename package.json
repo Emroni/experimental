@@ -17,6 +17,7 @@
     "@types/lodash": "^4.17.7",
     "@types/three": "^0.166.0",
     "alea": "^1.0.1",
+    "gsap": "^3.12.5",
     "lodash": "^4.17.21",
     "next": "14.2.5",
     "pixi-filters": "^6.0.4",

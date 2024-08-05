@@ -1,0 +1,165 @@
+<div id="container"></div>
+<div id="footer">
+    <p>
+        Music by <a href="https://maxcooper.net/order-from-chaos" target="_blank">Max Cooper</a>
+    </p>
+    <audio crossOrigin="anonymous" controls autoplay>
+        <source src="https://dl.dropboxusercontent.com/s/xisz69ic7imkdfj/max_cooper-order_from_chaos.mp3?dl=1" type="audio/mp3">
+    </audio>
+</div>
+
+<style>
+    body {
+        background-color: #000;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    #footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        margin: 0;
+
+        p {
+            margin: 1em;
+            font-size: 0.8em;
+
+            &,
+            a,
+            a:visited {
+                color: #fff;
+            }
+        }
+
+        audio {
+            width: 100%;
+            margin-bottom: -5px;
+
+            &::-webkit-media-controls-panel {
+                background-color: #000;
+            }
+        }
+    }
+
+
+
+    #container {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+
+    .drop {
+        border-radius: 50%;
+        border: 5px solid #fff;
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        transform: translate3d(-50%, -50%, 0);
+        animation: drop 0s ease-in-out 0s 1 forwards;
+    }
+
+    @keyframes drop {
+        0% {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        5% {
+            transform: scale(1);
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 0;
+            transform: scale(0);
+        }
+    }
+</style>
+
+<script>
+    var audioContext = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
+
+    var container = $('#container').get(0);
+    var center;
+    var radius;
+    var PI2 = Math.PI * 2;
+    var rotation = 0;
+
+    var audio = $('audio');
+    var audioContext = new audioContext();
+    var source = audioContext.createMediaElementSource(audio.get(0));
+    var analyser = audioContext.createAnalyser();
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+    analyser.fftSize = 32;
+    analyser.minDecibels = -90;
+    analyser.maxDecibels = 0;
+    var frequenciesData = new Uint8Array(analyser.frequencyBinCount);
+    var frequencies = new Float32Array(frequenciesData.length);
+    var average;
+
+    function render() {
+        requestAnimationFrame(render);
+
+        analyser.getByteFrequencyData(frequenciesData);
+        average = 0;
+        var i, n;
+        for (i = 0; i < frequenciesData.length; i++) {
+            n = frequenciesData[i] / 256;
+            frequencies[i] = n;
+            average += n;
+        }
+        average /= frequenciesData.length;
+
+        var f, a = 0;
+        for (i = Math.floor(frequencies.length * 0.5); i < frequencies.length; i++) {
+            a += frequencies[i];
+        }
+        a /= 2;
+
+        for (i = 0; i < frequencies.length; i++) {
+            f = frequencies[i];
+            if (f > 0.025) {
+                add(i / frequencies.length, f, a);
+            }
+        }
+
+        rotation += average * average * average * 10;
+        container.style['-webkit-transform'] = 'rotate(' + rotation + 'deg)';
+    }
+
+    function add(distance, force, offset) {
+        var drop = document.createElement('span');
+        drop.className = 'drop';
+        container.appendChild(drop);
+
+        var n = Math.random() * PI2;
+        var r = (distance + 0.1) * radius;
+        drop.style.left = center.x + Math.sin(n) * r + 'px';
+        drop.style.top = center.y + Math.cos(n) * r + 'px';
+        drop.style.border = (force * 10) + 'px solid hsl(' + (force + offset) * 256 + ', 100%, 50%)';
+        drop.style.width = drop.style.height = (average * force * 100) + 'px';
+        drop.style['-webkit-animation-duration'] = force * 3 + 's';
+
+        setTimeout(function () {
+            container.removeChild(drop);
+        }, force * 3000);
+    }
+
+    function resize() {
+        center = {
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2 - 20
+        };
+        radius = Math.max(center.x, center.y);
+    }
+
+    $(window).on('resize', resize);
+    resize();
+    render();
+</script>

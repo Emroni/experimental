@@ -1,0 +1,84 @@
+<div id="container"></div>
+<p>Position of the moon, sun and planets in our solar system, as seen from earth</p>
+
+<style>
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    p {
+        color: #ccc;
+        position: absolute;
+        font-size: 0.75em;
+        left: 0.5em;
+        bottom: 0.5em;
+        margin: 0;
+        z-index: 1;
+        text-shadow: 0 0 2px #000;
+    }
+</style>
+
+<script>
+    const NAMES = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto'];
+
+    let data, container, svg, date = new Date();
+    let gui, controls = {
+        year: date.getFullYear(),
+        month: date.getMonth(),
+        day: date.getDay(),
+        background: '#000000',
+        fill: '#000000',
+        stroke: '#ffffff',
+        strokeWidth: 2,
+        offsetX: 0,
+        offsetY: 0,
+    };
+
+    window.onload = () => {
+        container = $('#container');
+
+        gui = new dat.GUI();
+        gui.add(controls, 'year', 1900, 2100).step(1).onChange(change);
+        gui.add(controls, 'month', 1, 12).step(1).onChange(change);
+        gui.add(controls, 'day', 1, 31).step(1).onChange(change);
+        gui.addColor(controls, 'background').onChange(render);
+        gui.addColor(controls, 'fill').onChange(render);
+        gui.addColor(controls, 'stroke').onChange(render);
+        gui.add(controls, 'strokeWidth', 0, 10).step(1).onChange(render);
+        gui.add(controls, 'offsetX', -1, 1).step(0.001).onChange(render);
+        gui.add(controls, 'offsetY', -1, 1).step(0.001).onChange(render);
+        gui.close();
+
+        window.addEventListener('resize', render);
+        change();
+    };
+
+    function change() {
+        let date = `${controls.year}-${controls.month < 10 ? '0' : ''}${controls.month}-${controls.day < 10 ? '0' : ''}${controls.day}`;
+        $.getJSON(`https://codepen.emroni.com/solar/?date=${date}`, d => {
+            data = d;
+            render();
+        });
+    }
+
+    function render() {
+        if (svg) svg.remove();
+        svg = $(`<svg width="${window.innerWidth}px" height="${window.innerHeight}px"><rect x="0" y="0" width="100%" height="100%" fill="${controls.background}"></rect></svg>`);
+
+        let i, body, size;
+        for (i = 0; i < NAMES.length; i++) {
+            body = data[NAMES[i]];
+            size = Math.max(2, body.diameter / 5000000);
+
+            svg.append(`<circle r="${size}px" fill="${controls.fill}" stroke-width="${controls.strokeWidth}px" stroke="${controls.stroke}" cx="${(body.ascension + controls.offsetX) * 100}%" cy="${50 + ((body.declination + controls.offsetY) * 50)}%"><title>${body.name}</title></rect>`);
+        }
+
+        container.append(svg);
+        container.html(container.html());
+        svg = container.find('svg');
+    }
+
+</script>
