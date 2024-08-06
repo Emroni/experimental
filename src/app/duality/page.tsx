@@ -6,6 +6,7 @@ import { BlackSide, WhiteSide } from './Sides';
 
 export default class Duality extends React.Component<any, ExperimentControlItems> {
 
+    // TODO: Link to https://tympanus.net/codrops/2019/06/06/awesome-demos-roundup-5/#:~:text=Grid%20Card%20Slider-,Duality
     // TODO: Add experiment controls
     // TODO: Add player controls
 
