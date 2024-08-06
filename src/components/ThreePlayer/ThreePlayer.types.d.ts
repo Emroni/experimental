@@ -7,7 +7,6 @@ interface ThreePlayerProps {
 
 interface ThreePlayerState {
     duration: number;
-    initialized: boolean;
     playing: boolean;
     progress: number;
     size: number;

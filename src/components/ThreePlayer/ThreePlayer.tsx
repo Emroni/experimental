@@ -6,6 +6,8 @@ import PlayerControls from '../PlayerControls/PlayerControls';
 
 export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayerState> {
 
+    initialized = false;
+
     camera: THREE.PerspectiveCamera;
     canvasContainerRef: React.RefObject<HTMLDivElement>;
     renderer: THREE.WebGLRenderer;
@@ -19,7 +21,6 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
         // Prepare state
         this.state = {
             duration: 10,
-            initialized: false,
             playing: false,
             progress: 0,
             size: 640,
@@ -34,7 +35,9 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
 
     init = () => {
         // Initialize
-        if (!this.state.initialized) {
+        if (!this.initialized) {
+            this.initialized = true;
+
             // Create components
             this.scene = new THREE.Scene();
             this.camera = new THREE.PerspectiveCamera(75, 1, 1, 1000);
@@ -47,21 +50,8 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
             this.renderer.domElement.style.position = 'absolute';
 
             // Initialize page
-            this.props.onInit(this.scene, this.camera);
-            this.setState({
-                initialized: true,
-            }, () => {
-                this.init();
-            });
-
-        } else {
-            // Add to render container
-            if (this.canvasContainerRef.current) {
-                while (this.canvasContainerRef.current.childElementCount) {
-                    this.canvasContainerRef.current.lastChild?.remove();
-                }
-                this.canvasContainerRef.current.appendChild(this.renderer.domElement);
-            }
+            this.props.onInit(this.scene, this.camera, this.renderer);
+            this.init();
 
             // Update components
             this.camera.updateProjectionMatrix();
@@ -72,6 +62,13 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
 
             // Start playing
             this.togglePlaying(true);
+
+        } else if (this.canvasContainerRef.current) {
+            // Add to render container
+            while (this.canvasContainerRef.current.childElementCount) {
+                this.canvasContainerRef.current.lastChild?.remove();
+            }
+            this.canvasContainerRef.current.appendChild(this.renderer.domElement);
         }
     }
 
