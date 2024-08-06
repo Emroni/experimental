@@ -11,6 +11,7 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
     camera: THREE.PerspectiveCamera;
     canvasContainerRef: React.RefObject<HTMLDivElement>;
     renderer: THREE.WebGLRenderer;
+    renderFunc: Function;
     scene: THREE.Scene;
 
     constructor(props: ThreePlayerProps) {
@@ -42,7 +43,7 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
             this.scene = new THREE.Scene();
             this.camera = new THREE.PerspectiveCamera(75, 1, 1, 1000);
 
-            // Create renderer 
+            // Create renderer
             this.renderer = new THREE.WebGLRenderer();
             this.renderer.setSize(this.state.size, this.state.size);
             this.renderer.domElement.style.left = '50%';
@@ -50,7 +51,7 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
             this.renderer.domElement.style.position = 'absolute';
 
             // Initialize page
-            this.props.onInit(this.scene, this.camera, this.renderer);
+            this.renderFunc = this.props.onInit(this.scene, this.camera, this.renderer) || (() => this.renderer.render(this.scene, this.camera));
             this.init();
 
             // Update components
@@ -89,7 +90,7 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
 
         // Call tick and render
         this.props.onTick(progress);
-        this.renderer.render(this.scene, this.camera);
+        this.renderFunc();
     }
 
     handleResize = () => {
