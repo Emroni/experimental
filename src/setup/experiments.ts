@@ -32,7 +32,7 @@ const items: [string, string, boolean?, boolean?][] = [
     ['kaleidoscope/1', '2019-08-18', false, true],
     ['kaleidoscope/2', '2019-08-18', false, true],
     ['kaleidoscope/3', '2019-08-18', false, true],
-    ['mobius', '2017-06-01', false, true],
+    ['mobius', '2017-06-01'],
     ['morph', '2017-10-31', false, true],
     ['mother-box', '2017-12-04', false, true],
     ['nebula', '2017-10-30', false, true],
