@@ -4,7 +4,7 @@ import { Box, Typography } from '@mui/material';
 import React, { createRef } from 'react';
 import './styles.css';
 
-export default class Drops extends React.Component {
+export default class Drops1 extends React.Component {
 
     audioRef = createRef<HTMLAudioElement>();
     average = 0;
