@@ -39,7 +39,7 @@ export default function ExperimentControls({ items, onChange }: ExperimentContro
     const elements = useMemo(() => {
         return Object.entries(items).map(([name, item]) => {
             const step = item.step || ((item.max - item.min) / 100);
-            const decimals = parseInt(step.toString().split('.')[1]) || 0;
+            const decimals = step.toString().split('.')[1]?.length || 0;
 
             return {
                 ...item,

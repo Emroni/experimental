@@ -110,8 +110,7 @@ export default class Hexagon4 extends React.Component<any, ExperimentControlItem
             const layer = this.container.children[i];
             const scale = 1.5 - Math.max(0.5, Math.sin(PI_M2 * (progress * speed.value - i / this.container.children.length) + (i % 2 ? 1 : 3)));
 
-            for (let j = 0; j < layer.children.length; j++) {
-                const particle = layer.children[j];
+            for (const particle of layer.children) {
                 particle.scale.set(scale);
             }
         }

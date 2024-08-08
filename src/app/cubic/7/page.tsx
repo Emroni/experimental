@@ -153,9 +153,6 @@ export default class Cubic7 extends React.Component<any, ExperimentControlItems>
         planeBottomRight.position.y = -this.planeSize / 2 - this.wide;
         planeBottomRight.rotation.y = -PI_D2;
 
-        // Trigger state change
-        this.setState({});
-
         // Return render function
         return () => composer.render();
     }

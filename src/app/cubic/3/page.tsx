@@ -57,9 +57,6 @@ export default class Cubic3 extends React.Component<any, ExperimentControlItems>
                 }
             }
         }
-
-        // Trigger state change
-        this.setState({});
     }
 
     handleTick = (progress: number) => {
@@ -67,7 +64,6 @@ export default class Cubic3 extends React.Component<any, ExperimentControlItems>
         const tick = (progress * speed.value) % 1 * 12;
         this.particles.forEach(particle => particle.move(tick, delay.value));
     }
-
 
     render() {
         return <>

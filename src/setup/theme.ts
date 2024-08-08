@@ -10,6 +10,13 @@ export const theme = createTheme({
                 },
             },
         },
+        MuiCssBaseline: {
+            styleOverrides: {
+                a: {
+                    color: 'inherit',
+                },
+            },
+        },
         MuiListItemText: {
             styleOverrides: {
                 multiline: {

@@ -95,8 +95,8 @@ export default class Hexagon5 extends React.Component<any, ExperimentControlItem
             particle = new PIXI.Container();
             this.particles.push(particle);
 
-            for (let i = 0; i < this.shapeTextures.length; i++) {
-                const sprite = PIXI.Sprite.from(this.shapeTextures[i]);
+            for (const texture of this.shapeTextures) {
+                const sprite = PIXI.Sprite.from(texture);
                 particle.addChild(sprite);
                 sprite.position.x = -sprite.width / 2;
                 sprite.position.y = -sprite.height / 2;
@@ -129,8 +129,7 @@ export default class Hexagon5 extends React.Component<any, ExperimentControlItem
             ];
             const scale = 0.5 * Math.abs(Math.sin(PI_M2 * (progress * speed.value - i / this.container.children.length))) + 0.5;
 
-            for (let j = 0; j < layer.children.length; j++) {
-                const particle = layer.children[j];
+            for (const particle of layer.children) {
                 particle.scale.set(scale);
 
                 for (let k = 0; k < alphas.length; k++) {

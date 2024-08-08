@@ -38,9 +38,6 @@ export default class Cubic2 extends React.Component<any, ExperimentControlItems>
                 }
             }
         }
-
-        // Trigger state change
-        this.setState({});
     }
 
     handleTick = (progress: number) => {

@@ -102,8 +102,7 @@ export default class Hexagon1 extends React.Component<any, ExperimentControlItem
             const layer = this.container.children[i];
             const alpha = Math.abs(Math.sin(PI_M2 * (progress * speed.value - i / this.container.children.length)));
 
-            for (let j = 0; j < layer.children.length; j++) {
-                const particle = layer.children[j];
+            for (const particle of layer.children) {
                 particle.alpha = alpha;
             }
         }
