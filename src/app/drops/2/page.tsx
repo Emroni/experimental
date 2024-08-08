@@ -4,17 +4,16 @@ import { hslToHex } from '@/helpers';
 import { PI_M2 } from '@/setup';
 import { Box, Typography } from '@mui/material';
 import * as PIXI from 'pixi.js';
-import React, { createRef } from 'react';
+import React from 'react';
 
 export default class Drops2 extends React.Component<any, ExperimentControlItems> {
 
-    audioRef = createRef<HTMLAudioElement>();
     container = new PIXI.Container();
     fftSize = 32;
     frameRequest = 0;
     layers: PIXI.Container[] = [];
-    particles: PIXI.Sprite[] = [];
     particleHole = 50;
+    particles: PIXI.Sprite[] = [];
     particleSize = 100;
     size = 640;
 
@@ -91,10 +90,11 @@ export default class Drops2 extends React.Component<any, ExperimentControlItems>
         cancelAnimationFrame(this.frameRequest);
     }
 
-    handlePlay = () => {
-        if (this.audioRef.current && !this.analyser) {
+    handlePlay = (e: any) => {
+        if (!this.analyser) {
+            // Get analyser
             const audioContext = new AudioContext();
-            const source = audioContext.createMediaElementSource(this.audioRef.current);
+            const source = audioContext.createMediaElementSource(e.target);
             this.analyser = audioContext.createAnalyser();
             source.connect(this.analyser);
             this.analyser.connect(audioContext.destination);
@@ -102,16 +102,17 @@ export default class Drops2 extends React.Component<any, ExperimentControlItems>
             this.analyser.minDecibels = -90;
             this.analyser.maxDecibels = 0;
 
+            // Get frequency data
             this.frequenciesData = new Uint8Array(this.analyser.frequencyBinCount);
             this.frequencies = new Float32Array(this.frequenciesData.length);
 
+            // Initialize tick
             this.tick();
         }
     }
 
     tick = () => {
         const { force, shrink, size, speed } = this.state;
-
         this.frameRequest = requestAnimationFrame(this.tick);
 
         // Analyze frequencies
@@ -169,7 +170,7 @@ export default class Drops2 extends React.Component<any, ExperimentControlItems>
                 onInit={this.handleInit}
             />
             <Box alignItems="flex-end" display="flex" justifyContent="space-between" padding={3}>
-                <audio controls controlsList="nodownload noplaybackrate" ref={this.audioRef} onPlay={this.handlePlay}>
+                <audio controls controlsList="nodownload noplaybackrate" onPlay={this.handlePlay}>
                     <source src="/assets/sounds/max_cooper-order_from_chaos.mp3" type="audio/mp3" />
                 </audio>
                 <Typography>

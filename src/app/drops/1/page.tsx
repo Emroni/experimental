@@ -6,7 +6,6 @@ import './styles.css';
 
 export default class Drops1 extends React.Component {
 
-    audioRef = createRef<HTMLAudioElement>();
     average = 0;
     center = { x: 0, y: 0 };
     containerRef = createRef<HTMLDivElement>();
@@ -39,10 +38,11 @@ export default class Drops1 extends React.Component {
         }
     }
 
-    handlePlay = () => {
-        if (this.audioRef.current && !this.analyser && this.containerRef.current) {
+    handlePlay = (e: any) => {
+        if (!this.analyser ) {
+            // Get analyser
             const audioContext = new AudioContext();
-            const source = audioContext.createMediaElementSource(this.audioRef.current);
+            const source = audioContext.createMediaElementSource(e.target);
             this.analyser = audioContext.createAnalyser();
             source.connect(this.analyser);
             this.analyser.connect(audioContext.destination);
@@ -50,11 +50,11 @@ export default class Drops1 extends React.Component {
             this.analyser.minDecibels = -90;
             this.analyser.maxDecibels = 0;
 
+            // Get frequency data
             this.frequenciesData = new Uint8Array(this.analyser.frequencyBinCount);
             this.frequencies = new Float32Array(this.frequenciesData.length);
 
-            this.containerRef.current.firstChild?.remove();
-
+            // Initialize tick
             this.tick();
         }
     }
@@ -96,8 +96,8 @@ export default class Drops1 extends React.Component {
             drop.className = 'drop';
             this.containerRef.current.appendChild(drop);
 
-            var n = Math.random() * PI_M2;
-            var r = (distance + 0.1) * this.radius;
+            const n = Math.random() * PI_M2;
+            const r = (distance + 0.1) * this.radius;
             drop.style.left = this.center.x + Math.sin(n) * r + 'px';
             drop.style.top = this.center.y + Math.cos(n) * r + 'px';
             drop.style.border = `${force * 10}px solid hsl(${(force + offset) * 256}, 100%, 50%)`;
@@ -112,13 +112,9 @@ export default class Drops1 extends React.Component {
 
     render() {
         return <>
-            <Box flex={1} position="relative" ref={this.containerRef}>
-                <Typography align="center" left={0} position="absolute" textTransform="uppercase" top="50%" width="100%">
-                    Press play
-                </Typography>
-            </Box>
+            <Box flex={1} position="relative" ref={this.containerRef} />
             <Box alignItems="flex-end" display="flex" justifyContent="space-between" padding={3}>
-                <audio controls controlsList="nodownload noplaybackrate" ref={this.audioRef} onPlay={this.handlePlay}>
+                <audio controls controlsList="nodownload noplaybackrate" onPlay={this.handlePlay}>
                     <source src="/assets/sounds/max_cooper-order_from_chaos.mp3" type="audio/mp3" />
                 </audio>
                 <Typography>
