@@ -45,7 +45,7 @@ export default function Home() {
         </Box>
         <Box>
             <Grid container overflow="auto" spacing={3}>
-                {experiments.filter(experiment => !experiment.disabled && !experiment.featured).map((experiment, index) => (
+                {experiments.filter(experiment => !experiment.disabled).map((experiment, index) => (
                     <Grid item key={index} xs={12} md={6} lg={4} xl={3}>
                         <CardActionArea href={experiment.path}>
                             <Card>

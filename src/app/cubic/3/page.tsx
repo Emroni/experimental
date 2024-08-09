@@ -1,11 +1,11 @@
 'use client';
 import { ExperimentControls, ThreePlayer } from '@/components';
 import { PI_D4, PI_D8 } from '@/setup';
-import React from 'react';
+import { Component } from 'react';
 import * as THREE from 'three';
 import Particle, { PARTICLE_ROWS, PARTICLE_SIZE } from './Particle';
 
-export default class Cubic3 extends React.Component<any, ExperimentControlItems> {
+export default class Cubic3 extends Component<any, ExperimentControlItems> {
 
     // TODO: Check performance drop
 

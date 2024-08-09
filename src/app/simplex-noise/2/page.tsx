@@ -3,10 +3,10 @@ import { ExperimentControls, PixiPlayer } from '@/components';
 import { PI_M2 } from '@/setup';
 import alea from 'alea';
 import * as PIXI from 'pixi.js';
-import React from 'react';
+import { Component } from 'react';
 import { createNoise3D } from 'simplex-noise';
 
-export default class SimplexNoise2 extends React.Component<any, ExperimentControlItems> {
+export default class SimplexNoise2 extends Component<any, ExperimentControlItems> {
 
     center = 320;
     container = new PIXI.Container();

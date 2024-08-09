@@ -2,6 +2,7 @@ import { Analytics, ExperimentSource, Sidebar } from '@/components';
 import { ThemeProvider } from '@/contexts/Theme/Theme';
 import { Box } from '@mui/material';
 import type { Metadata } from 'next';
+import { ReactNode } from 'react';
 
 export const metadata: Metadata = {
     title: 'Experimental - Emre Koc',
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
 
     return <html lang="en">
         <Analytics />

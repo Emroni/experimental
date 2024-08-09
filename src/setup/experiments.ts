@@ -15,6 +15,7 @@ const items: [string, string, boolean?, boolean?][] = [
     ['cubic/7', '2019-10-15', true],
     ['drops/1', '2017-06-02'],
     ['drops/2', '2024-08-08', true],
+    ['drops/3', '2024-08-09'],
     ['duality', '2019-05-20', true],
     ['eye/1', '2019-08-23', false, true],
     ['eye/2', '2019-08-23', false, true],
