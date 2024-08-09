@@ -1,5 +1,5 @@
 'use client';
-import { ExperimentControls, PixiPlayer } from '@/components';
+import { AudioAnalyser, ExperimentControls, PixiPlayer } from '@/components';
 import { hslToHex } from '@/helpers';
 import { PI_M2 } from '@/setup';
 import { Box, Typography } from '@mui/material';
@@ -9,17 +9,12 @@ import React from 'react';
 export default class Drops2 extends React.Component<any, ExperimentControlItems> {
 
     container = new PIXI.Container();
-    fftSize = 32;
-    frameRequest = 0;
     layers: PIXI.Container[] = [];
     particleHole = 50;
     particles: PIXI.Sprite[] = [];
     particleSize = 100;
     size = 640;
 
-    analyser: AnalyserNode;
-    frequencies: Float32Array;
-    frequenciesData: Uint8Array;
     particleTexture: PIXI.Texture;
 
     state = {
@@ -35,7 +30,7 @@ export default class Drops2 extends React.Component<any, ExperimentControlItems>
         app.stage.addChild(this.container);
 
         // Create layers
-        for (let i = 0; i < this.fftSize; i++) {
+        for (let i = 0; i < 32; i++) {
             const layer = new PIXI.Container();
             this.layers.push(layer);
             this.container.addChild(layer);
@@ -86,49 +81,13 @@ export default class Drops2 extends React.Component<any, ExperimentControlItems>
         }
     }
 
-    componentWillUnmount() {
-        cancelAnimationFrame(this.frameRequest);
-    }
-
-    handlePlay = (e: any) => {
-        if (!this.analyser) {
-            // Get analyser
-            const audioContext = new AudioContext();
-            const source = audioContext.createMediaElementSource(e.target);
-            this.analyser = audioContext.createAnalyser();
-            source.connect(this.analyser);
-            this.analyser.connect(audioContext.destination);
-            this.analyser.fftSize = this.fftSize;
-            this.analyser.minDecibels = -90;
-            this.analyser.maxDecibels = 0;
-
-            // Get frequency data
-            this.frequenciesData = new Uint8Array(this.analyser.frequencyBinCount);
-            this.frequencies = new Float32Array(this.frequenciesData.length);
-
-            // Initialize tick
-            this.tick();
-        }
-    }
-
-    tick = () => {
+    handleTick = (frequencies: Float32Array, average: number) => {
         const { force, shrink, size, speed } = this.state;
-        this.frameRequest = requestAnimationFrame(this.tick);
-
-        // Analyze frequencies
-        this.analyser.getByteFrequencyData(this.frequenciesData);
-        let average = 0;
-        for (let i = 0; i < this.frequenciesData.length; i++) {
-            const n = this.frequenciesData[i] / 256;
-            this.frequencies[i] = n;
-            average += n;
-        }
-        average /= this.frequenciesData.length;
 
         // Get offset
         let offset = 0;
-        for (let i = Math.floor(this.frequencies.length * 0.5); i < this.frequencies.length; i++) {
-            offset += this.frequencies[i];
+        for (let i = Math.floor(frequencies.length * 0.5); i < frequencies.length; i++) {
+            offset += frequencies[i];
         }
         offset /= 2;
 
@@ -145,10 +104,10 @@ export default class Drops2 extends React.Component<any, ExperimentControlItems>
         }
 
         // Ping particles
-        for (let i = 0; i < this.frequencies.length; i++) {
-            const frequency = this.frequencies[i];
+        for (let i = 0; i < frequencies.length; i++) {
+            const frequency = frequencies[i];
             if (frequency > 0.025) {
-                const layerIndex = Math.floor(i / this.frequencies.length * this.layers.length);
+                const layerIndex = Math.floor(i / frequencies.length * this.layers.length);
                 const layer = this.layers[layerIndex];
 
                 const particleIndex = Math.floor(Math.random() * layer.children.length);
@@ -170,9 +129,7 @@ export default class Drops2 extends React.Component<any, ExperimentControlItems>
                 onInit={this.handleInit}
             />
             <Box alignItems="flex-end" display="flex" justifyContent="space-between" padding={3}>
-                <audio controls controlsList="nodownload noplaybackrate" onPlay={this.handlePlay}>
-                    <source src="/assets/sounds/max_cooper-order_from_chaos.mp3" type="audio/mp3" />
-                </audio>
+                <AudioAnalyser onTick={this.handleTick} />
                 <Typography>
                     Music by <a href="https://maxcooper.net/order-from-chaos" target="_blank">Max Cooper</a>
                 </Typography>

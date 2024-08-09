@@ -1,4 +1,5 @@
 'use client';
+import { AudioAnalyser } from '@/components';
 import { PI_M2 } from '@/setup';
 import { Box, Typography } from '@mui/material';
 import React, { createRef } from 'react';
@@ -6,16 +7,11 @@ import './styles.css';
 
 export default class Drops1 extends React.Component {
 
-    average = 0;
     center = { x: 0, y: 0 };
     containerRef = createRef<HTMLDivElement>();
     frameRequest = 0;
     radius = 0;
     rotation = 0;
-
-    analyser: AnalyserNode;
-    frequencies: Float32Array;
-    frequenciesData: Uint8Array;
 
     componentDidMount() {
         window.addEventListener('resize', this.resize);
@@ -38,59 +34,27 @@ export default class Drops1 extends React.Component {
         }
     }
 
-    handlePlay = (e: any) => {
-        if (!this.analyser ) {
-            // Get analyser
-            const audioContext = new AudioContext();
-            const source = audioContext.createMediaElementSource(e.target);
-            this.analyser = audioContext.createAnalyser();
-            source.connect(this.analyser);
-            this.analyser.connect(audioContext.destination);
-            this.analyser.fftSize = 32;
-            this.analyser.minDecibels = -90;
-            this.analyser.maxDecibels = 0;
-
-            // Get frequency data
-            this.frequenciesData = new Uint8Array(this.analyser.frequencyBinCount);
-            this.frequencies = new Float32Array(this.frequenciesData.length);
-
-            // Initialize tick
-            this.tick();
+    handleTick = (frequencies: Float32Array, average: number) => {
+        let offset = 0;
+        for (let i = Math.floor(frequencies.length * 0.5); i < frequencies.length; i++) {
+            offset += frequencies[i];
         }
-    }
+        offset /= 2;
 
-    tick = () => {
-        this.frameRequest = requestAnimationFrame(this.tick);
-
-        this.analyser.getByteFrequencyData(this.frequenciesData);
-        this.average = 0;
-        for (let i = 0; i < this.frequenciesData.length; i++) {
-            const n = this.frequenciesData[i] / 256;
-            this.frequencies[i] = n;
-            this.average += n;
-        }
-        this.average /= this.frequenciesData.length;
-
-        let a = 0;
-        for (let i = Math.floor(this.frequencies.length * 0.5); i < this.frequencies.length; i++) {
-            a += this.frequencies[i];
-        }
-        a /= 2;
-
-        for (let i = 0; i < this.frequencies.length; i++) {
-            const f = this.frequencies[i];
-            if (f > 0.025) {
-                this.add(i / this.frequencies.length, f, a);
+        for (let i = 0; i < frequencies.length; i++) {
+            const frequency = frequencies[i];
+            if (frequency > 0.025) {
+                this.add(i / frequencies.length, frequency, offset, average);
             }
         }
 
         if (this.containerRef.current) {
-            this.rotation += this.average * this.average * this.average * 10;
+            this.rotation += average * average * average * 10;
             this.containerRef.current.style.transform = `rotate(${this.rotation}deg)`;
         }
     }
 
-    add = (distance: number, force: number, offset: number) => {
+    add = (distance: number, force: number, offset: number, average: number) => {
         if (this.containerRef.current) {
             const drop = document.createElement('span');
             drop.className = 'drop';
@@ -101,7 +65,7 @@ export default class Drops1 extends React.Component {
             drop.style.left = this.center.x + Math.sin(n) * r + 'px';
             drop.style.top = this.center.y + Math.cos(n) * r + 'px';
             drop.style.border = `${force * 10}px solid hsl(${(force + offset) * 256}, 100%, 50%)`;
-            drop.style.width = drop.style.height = (this.average * force * 100) + 'px';
+            drop.style.width = drop.style.height = (average * force * 100) + 'px';
             drop.style.animationDuration = force * 3 + 's';
 
             setTimeout(() => {
@@ -114,9 +78,7 @@ export default class Drops1 extends React.Component {
         return <>
             <Box flex={1} position="relative" ref={this.containerRef} />
             <Box alignItems="flex-end" display="flex" justifyContent="space-between" padding={3}>
-                <audio controls controlsList="nodownload noplaybackrate" onPlay={this.handlePlay}>
-                    <source src="/assets/sounds/max_cooper-order_from_chaos.mp3" type="audio/mp3" />
-                </audio>
+                <AudioAnalyser onTick={this.handleTick} />
                 <Typography>
                     Music by <a href="https://maxcooper.net/order-from-chaos" target="_blank">Max Cooper</a>
                 </Typography>
