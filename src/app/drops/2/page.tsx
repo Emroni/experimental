@@ -81,7 +81,7 @@ export default class Drops2 extends Component<any, ExperimentControlItems> {
         }
     }
 
-    handleTick = (frequencies: Float32Array, average: number) => {
+    handleTick = (frequencies: number[], average: number) => {
         const { force, shrink, size, speed } = this.state;
 
         // Get offset

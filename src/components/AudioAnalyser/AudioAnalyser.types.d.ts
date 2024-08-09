@@ -1,5 +1,5 @@
 interface AudioAnalyserProps {
-    onTick(frequencies: Float32Array, average: number): void;
+    onTick(frequencies: number[], average: number): void;
 }
 
 interface AudioAnalyserState {

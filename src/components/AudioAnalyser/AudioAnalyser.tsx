@@ -5,9 +5,9 @@ import { Component } from 'react';
 export default class AudioAnalyser extends Component<AudioAnalyserProps, AudioAnalyserState> {
 
     animationFrame = 0;
+    frequencies = new Array(16).fill(0);
 
     analyser: AnalyserNode;
-    frequencies: Float32Array;
     frequenciesData: Uint8Array;
 
     state = {
@@ -32,7 +32,6 @@ export default class AudioAnalyser extends Component<AudioAnalyserProps, AudioAn
 
             // Get frequency data
             this.frequenciesData = new Uint8Array(this.analyser.frequencyBinCount);
-            this.frequencies = new Float32Array(this.frequenciesData.length);
 
             // Initialize
             this.setState({

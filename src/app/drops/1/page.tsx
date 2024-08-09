@@ -34,7 +34,7 @@ export default class Drops1 extends Component {
         }
     }
 
-    handleTick = (frequencies: Float32Array, average: number) => {
+    handleTick = (frequencies: number[], average: number) => {
         let offset = 0;
         for (let i = Math.floor(frequencies.length * 0.5); i < frequencies.length; i++) {
             offset += frequencies[i];
