@@ -4,9 +4,9 @@ import { hslToHex } from '@/helpers';
 import { PI_M2 } from '@/setup';
 import { Box, Typography } from '@mui/material';
 import * as PIXI from 'pixi.js';
-import React from 'react';
+import { Component } from 'react';
 
-export default class Drops2 extends React.Component<any, ExperimentControlItems> {
+export default class Drops2 extends Component<any, ExperimentControlItems> {
 
     container = new PIXI.Container();
     layers: PIXI.Container[] = [];

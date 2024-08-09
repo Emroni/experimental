@@ -1,10 +1,10 @@
 'use client';
 import { ExperimentControls, ThreePlayer } from '@/components';
 import { PI_M2 } from '@/setup';
-import React from 'react';
+import { Component } from 'react';
 import * as THREE from 'three';
 
-export default class Mobius extends React.Component<any, ExperimentControlItems> {
+export default class Mobius extends Component<any, ExperimentControlItems> {
 
     container = new THREE.Object3D();
     layers: THREE.Object3D[] = [];

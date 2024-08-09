@@ -2,9 +2,9 @@
 import { ExperimentControls, PixiPlayer } from '@/components';
 import { PI_M2 } from '@/setup';
 import * as PIXI from 'pixi.js';
-import React from 'react';
+import { Component } from 'react';
 
-export default class Hexagon3 extends React.Component<any, ExperimentControlItems> {
+export default class Hexagon3 extends Component<any, ExperimentControlItems> {
 
     container = new PIXI.Container();
     layers: PIXI.Container[] = [];

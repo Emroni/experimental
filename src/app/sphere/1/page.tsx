@@ -1,10 +1,10 @@
 'use client';
 import { ExperimentControls, ThreePlayer } from '@/components';
 import { PI, PI_D2, PI_M2 } from '@/setup';
-import React from 'react';
+import { Component } from 'react';
 import * as THREE from 'three';
 
-export default class Sphere1 extends React.Component<any, ExperimentControlItems> {
+export default class Sphere1 extends Component<any, ExperimentControlItems> {
 
     color = 0xFFFFFF;
     container = new THREE.Group();

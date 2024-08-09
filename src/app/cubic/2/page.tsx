@@ -1,10 +1,10 @@
 'use client';
 import { ExperimentControls, ThreePlayer } from '@/components';
-import React from 'react';
+import { Component } from 'react';
 import * as THREE from 'three';
 import Shape, { CUBE_ROWS } from './Shape';
 
-export default class Cubic2 extends React.Component<any, ExperimentControlItems> {
+export default class Cubic2 extends Component<any, ExperimentControlItems> {
 
     depth = 1000;
     shapes: Shape[] = [];

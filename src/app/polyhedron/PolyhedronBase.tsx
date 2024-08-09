@@ -1,11 +1,11 @@
 'use client';
 import { ExperimentControls, ThreePlayer } from '@/components';
 import { PI_M2 } from '@/setup';
-import React from 'react';
+import { Component } from 'react';
 import { createNoise3D } from 'simplex-noise';
 import * as THREE from 'three';
 
-export default class PolyhedronBase extends React.Component<PolyhedronBaseProps, ExperimentControlItems> {
+export default class PolyhedronBase extends Component<PolyhedronBaseProps, ExperimentControlItems> {
 
     container = new THREE.Group();
     geometry = new THREE.BufferGeometry();

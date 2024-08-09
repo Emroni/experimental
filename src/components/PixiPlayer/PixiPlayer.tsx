@@ -1,13 +1,13 @@
 'use client';
 import { Box } from '@mui/material';
 import * as PIXI from 'pixi.js';
-import { Component, createRef } from 'react';
+import { Component, createRef, RefObject } from 'react';
 import PlayerControls from '../PlayerControls/PlayerControls';
 
 export default class PixiPlayer extends Component<PixiPlayerProps, PixiPlayerState> {
 
     app: PIXI.Application<PIXI.Renderer>;
-    canvasContainerRef: React.RefObject<HTMLDivElement>;
+    canvasContainerRef: RefObject<HTMLDivElement>;
 
     constructor(props: PixiPlayerProps) {
         super(props);

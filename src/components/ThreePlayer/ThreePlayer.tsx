@@ -1,6 +1,6 @@
 'use client';
 import { Box } from '@mui/material';
-import { Component, createRef } from 'react';
+import { Component, createRef, RefObject } from 'react';
 import * as THREE from 'three';
 import PlayerControls from '../PlayerControls/PlayerControls';
 
@@ -9,7 +9,7 @@ export default class ThreePlayer extends Component<ThreePlayerProps, ThreePlayer
     initialized = false;
 
     camera: THREE.PerspectiveCamera;
-    canvasContainerRef: React.RefObject<HTMLDivElement>;
+    canvasContainerRef: RefObject<HTMLDivElement>;
     renderer: THREE.WebGLRenderer;
     renderFunc: Function;
     scene: THREE.Scene;

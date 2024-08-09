@@ -2,13 +2,13 @@
 import { ThreePlayer } from '@/components';
 import { easeInOutCubic } from '@/helpers';
 import { PI_D2, PI_M2 } from '@/setup';
-import React from 'react';
+import { Component } from 'react';
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-export default class Cubic7 extends React.Component<any, ExperimentControlItems> {
+export default class Cubic7 extends Component<any, ExperimentControlItems> {
 
     // TODO: Add experiment controls
 
