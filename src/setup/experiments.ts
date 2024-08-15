@@ -37,7 +37,7 @@ const items: [string, string, boolean?, boolean?][] = [
     ['mobius', '2017-06-01'],
     ['morph', '2017-10-31', false, true],
     ['mother-box', '2017-12-04', false, true],
-    ['nebula', '2017-10-30', false, true],
+    ['nebula', '2017-10-30'],
     ['pixeliser', '2018-04-14', false, true],
     ['plotter/1', '2019-09-17', false, true],
     ['plotter/2', '2019-09-18', false, true],
