@@ -44,7 +44,7 @@ const items: [string, string, boolean?, boolean?][] = [
     ['polyhedron/1', '2019-08-14'],
     ['polyhedron/2', '2019-08-14'],
     ['rings', '2018-06-21', false, true],
-    ['ripples', '2017-06-07', false, true],
+    ['ripples', '2017-06-07'],
     ['simplex-noise/1', '2019-08-09'],
     ['simplex-noise/2', '2019-08-11'],
     ['solar', '2018-04-02', false, true],
