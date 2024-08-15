@@ -53,7 +53,6 @@ const items: [string, string, boolean?, boolean?][] = [
     ['sphere/3', '2020-01-30', false, true],
     ['tau', '2018-06-15', false, true],
     ['tree-of-thoughts', '2017-11-01', false, true],
-    ['trigonometry', '2017-08-08', false, true],
     ['tunnel/1', '2019-08-19', false, true],
     ['tunnel/2', '2019-08-19', false, true],
     ['tunnel/3', '2019-09-29', false, true],
