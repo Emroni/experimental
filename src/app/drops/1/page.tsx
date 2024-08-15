@@ -9,7 +9,6 @@ export default class Drops1 extends Component {
 
     center = { x: 0, y: 0 };
     containerRef = createRef<HTMLDivElement>();
-    frameRequest = 0;
     radius = 0;
     rotation = 0;
 
@@ -19,7 +18,6 @@ export default class Drops1 extends Component {
     }
 
     componentWillUnmount() {
-        cancelAnimationFrame(this.frameRequest);
         window.removeEventListener('resize', this.resize);
     }
 
