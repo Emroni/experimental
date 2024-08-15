@@ -10,7 +10,7 @@ export default function Sidebar() {
     const pathname = usePathname();
 
     const selectedItemRef = useCallback((ref: HTMLAnchorElement) => {
-        ref.scrollIntoView();
+        ref?.scrollIntoView();
     }, []);
 
     return <Box bgcolor="grey.900" component="nav" display="flex" flexDirection="column" height="100vh">
